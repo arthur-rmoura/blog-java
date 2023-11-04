@@ -1,5 +1,6 @@
 package com.api.core.appl.picture.repository.impl;
 
+import java.util.NoSuchElementException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,12 +29,6 @@ public class PictureRepositoryImpl implements PictureRepository{
 		return pictureRepositoryData.findAll(pageable);
 	}
 
-	@Override
-	public Page<Picture> listPictureByAlbumAndId(Filter filter) {
-		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageNumber());
-		return pictureRepositoryData.findByAlbumAndId(filter.getAlbumId(), filter.getPictureId(), pageable);
-	}
-
 
 	@Override
 	public Page<Picture> listPictureByAlbum(Filter filter) {
@@ -42,14 +37,14 @@ public class PictureRepositoryImpl implements PictureRepository{
 	}
 	
 	@Override
-	public Page<Picture> listPictureById(Filter filter) {
-		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageNumber());
-		return pictureRepositoryData.findById(filter.getPictureId(), pageable);
-	}
-	
-	@Override
 	public Picture findPictureById(Filter filter) {
-		return pictureRepositoryData.findById(filter.getPictureId());
+		try {
+			Picture picture = pictureRepositoryData.findById(filter.getPictureId()).get();
+			return picture;
+		}
+		catch (NoSuchElementException  e) {
+			return new Picture("", 0L, null);
+		}
 	}
 
 	@Override
@@ -57,5 +52,15 @@ public class PictureRepositoryImpl implements PictureRepository{
 		return pictureRepositoryData.save(picture);
 	}
 
-	
+	@Override
+	public Page<Picture> listPictureByAlbumAndName(Filter filter) {
+		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageNumber());
+		return pictureRepositoryData.findByAlbumAndName(filter.getAlbumId(),filter.getPictureName(), pageable);
+	}
+
+	@Override
+	public Page<Picture> findPictureByName(Filter filter) {
+		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageNumber());
+		return pictureRepositoryData.findByName(filter.getPictureName(), pageable);
+	}
 }

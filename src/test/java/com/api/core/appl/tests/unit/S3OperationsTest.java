@@ -29,10 +29,11 @@ class S3OperationsTest {
 	        
 	        byte[] pictureData = UtilLibrary.getObjectBytes(s3, "pictures-blog-java", "0b51d184-532e-4dc0-8b59-9bd366eed4d9");
 	        
-	        System.out.println("Leu com sucesso " + pictureData.length + " bytes");
+	        System.out.println("Read successfully " + pictureData.length + " bytes");
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			fail("An exception has ocurred");
 		}
         
 		return;

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import com.api.core.appl.album.Album;
 import com.api.core.appl.comment.service.spec.CommentService;
 import com.api.core.appl.picture.Picture;
 import com.api.core.appl.picture.PictureDTO;
@@ -44,13 +45,13 @@ public class PictureServiceImpl implements PictureService {
 
 		Page<Picture> pagePicture;
 
-		if (filter.getAlbumId() != null && filter.getPictureId() != null) {
-			pagePicture = pictureRepository.listPictureByAlbumAndId(filter);
+		if (filter.getAlbumId() != null && filter.getPictureName() != null) {
+			pagePicture = pictureRepository.listPictureByAlbumAndName(filter);
 		}
 		else if (filter.getAlbumId() != null) {
 			pagePicture = pictureRepository.listPictureByAlbum(filter);
 		} else if (filter.getPictureId() != null) {
-			pagePicture = pictureRepository.listPictureById(filter);
+			pagePicture = pictureRepository.findPictureByName(filter);
 		} else {
 			pagePicture = pictureRepository.listPicture(filter);
 		}
@@ -76,7 +77,7 @@ public class PictureServiceImpl implements PictureService {
 			byte[] pictureData = UtilLibrary.getObjectBytes(s3, picturesBucketName, picture.getIdAmazonS3().toString());
 			Instant instant = Instant.now();
 	        LocalDateTime localDateTime = LocalDateTime.ofEpochSecond(picture.getDateTimestamp().longValue(), 0, ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
-			PictureDTO pictureDTO = new PictureDTO(picture.getId(), picture.getName(), localDateTime.format(formatter), pictureData);
+			PictureDTO pictureDTO = new PictureDTO(picture.getId(), picture.getName(), localDateTime.format(formatter), pictureData, picture.getAlbum().getId());
 			listaPictureDTO.add(pictureDTO);
 		}
 
@@ -103,11 +104,11 @@ public class PictureServiceImpl implements PictureService {
 
 		UUID uuid = UUID.randomUUID();
 		Picture picture = new Picture(pictureDTO.getName(), timestampDate, uuid);
-		// TODO fazer parte do álbum e do upload pro S3
-		//Album album = new Album(...);
-		//picture.setAlbum(album);
+		
+		Album album = new Album(pictureDTO.getAlbumId());
+		picture.setAlbum(album);
 
-		//fazer upload pro s3
+		// TODO fazer parte do upload pro S3
 		pictureRepository.createPicture(picture);
 		
 
@@ -119,6 +120,11 @@ public class PictureServiceImpl implements PictureService {
 	public PictureDTO getPicture(Filter filter) {
 		
 		Picture picture = pictureRepository.findPictureById(filter);
+		
+		if(picture.getId() == null) {
+			PictureDTO pictureDTO = new PictureDTO(0L, "", "", null, 0L);
+			return pictureDTO;
+		}
 		
 		StaticCredentialsProvider staticCredentialsProvider = UtilLibrary.getStaticCredentialsProvider();
         Region region = Region.SA_EAST_1;
@@ -135,7 +141,7 @@ public class PictureServiceImpl implements PictureService {
         byte[] pictureData = UtilLibrary.getObjectBytes(s3, picturesBucketName, picture.getIdAmazonS3().toString());
         Instant instant = Instant.now();
         LocalDateTime localDateTime = LocalDateTime.ofEpochSecond(picture.getDateTimestamp().longValue(), 0, ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
-        PictureDTO pictureDTO = new PictureDTO(picture.getId(), picture.getName(), localDateTime.format(formatter), pictureData);
+        PictureDTO pictureDTO = new PictureDTO(picture.getId(), picture.getName(), localDateTime.format(formatter), pictureData,  picture.getAlbum().getId());
         
         return pictureDTO;
 	}

@@ -10,6 +10,7 @@ public class Filter {
 	private String albumName;
 	private String birthDate;
 	private String firstName;
+	private String pictureName;
 	private Long pictureId;
 	private Long commentId;
 	private Long userId;
@@ -95,5 +96,10 @@ public class Filter {
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
-	
+	public String getPictureName() {
+		return pictureName;
+	}
+	public void setPictureName(String pictureName) {
+		this.pictureName = pictureName;
+	}
 }

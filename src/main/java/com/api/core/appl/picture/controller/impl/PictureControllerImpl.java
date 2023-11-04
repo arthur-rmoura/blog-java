@@ -35,7 +35,7 @@ public class PictureControllerImpl implements PictureController {
 	@Autowired
 	PictureService pictureService;
 
-	@Operation(summary = "Recupera Fotos", description = "Recupera Fotos paginados e filtrados por álbum e figura")
+	@Operation(summary = "Recupera Fotos", description = "Recupera Fotos paginados e filtrados por álbum e/ou nome")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Dados recuperados com sucesso.", content = {
 					@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PictureDTO.class))) }),
@@ -48,12 +48,12 @@ public class PictureControllerImpl implements PictureController {
 			@RequestParam(name = "pageNumber", required = false, defaultValue = "0") @Parameter(name = "pageNumber", description = "Número da página", example = "1", in = ParameterIn.QUERY) Integer pageNumber,
 			@RequestParam(name = "pageSize", required = false, defaultValue = "10") @Parameter(name = "pageSize", description = "Tamanho da página", example = "10", in = ParameterIn.QUERY) Integer pageSize,
 			@RequestParam(name = "albumId", required = false) @Parameter(name = "albumId", description = "Id do álbum", example = "100", in = ParameterIn.QUERY, required = true) Long albumId,
-			@RequestParam(name = "pictureId", required = false) @Parameter(name = "Id da figura", description = "Id da figura", example = "100", in = ParameterIn.QUERY) Long pictureId) {
+			@RequestParam(name = "pictureName", required = false) @Parameter(name = "Nome da figura", description = "Nome da figura", example = "100", in = ParameterIn.QUERY) String pictureName) {
 		Filter filter = new Filter();
 		filter.setPageNumber(pageNumber);
 		filter.setPageSize(pageSize);
 		filter.setAlbumId(albumId);
-		filter.setPictureId(pictureId);
+		filter.setPictureName(pictureName);
 
 		ArrayList<PictureDTO> pictureDTOList = pictureService.listPicture(filter);
 
@@ -96,6 +96,11 @@ public class PictureControllerImpl implements PictureController {
 		Filter filter = new Filter();
 		filter.setPictureId(pictureId);
 		PictureDTO pictureDTO = pictureService.getPicture(filter);
+		
+		if(pictureDTO.getId() == 0) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		
 		return new ResponseEntity<PictureDTO>(pictureDTO, HttpStatus.OK);
 	}
 
@@ -112,7 +117,7 @@ public class PictureControllerImpl implements PictureController {
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, description = "Payload da requisição contendo o conteúdo json e arquivo da nova figura a ser atualizada", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = PictureDTO.class)) }) @RequestBody PictureDTO pictureDTO
 	) {
-		pictureDTO.setPictureId(pictureId);
+		pictureDTO.setId(pictureId);
 		pictureDTO = pictureService.updatePicture(pictureDTO);
 		return new ResponseEntity<PictureDTO>(pictureDTO, HttpStatus.OK);
 	}

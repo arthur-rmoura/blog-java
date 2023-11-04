@@ -6,11 +6,13 @@ public class PictureDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Long pictureId;
+	private Long id;
 
 	private String name;
 
 	private String date;
+	
+	private Long albumId;
 
 	private byte[] data;
 
@@ -18,20 +20,21 @@ public class PictureDTO implements Serializable {
 
 	}
 
-	public PictureDTO(Long pictureId, String name, String date, byte[] data) {
+	public PictureDTO(Long id, String name, String date, byte[] data, Long albumId) {
 		super();
-		this.pictureId = pictureId;
+		this.id = id;
 		this.name = name;
 		this.date = date;
 		this.data = data;
+		this.albumId = albumId;
 	}
 
-	public Long getPictureId() {
-		return pictureId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setPictureId(Long pictureId) {
-		this.pictureId = pictureId;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -58,4 +61,11 @@ public class PictureDTO implements Serializable {
 		this.data = data;
 	}
 
+	public Long getAlbumId() {
+		return albumId;
+	}
+
+	public void setAlbumId(Long albumId) {
+		this.albumId = albumId;
+	}
 }

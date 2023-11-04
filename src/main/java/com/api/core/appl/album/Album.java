@@ -3,6 +3,7 @@ package com.api.core.appl.album;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,12 +22,57 @@ public class Album implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	//Continuar colocando aqui outros campos
-	
-	@OneToMany(mappedBy="album", fetch = FetchType.LAZY)
+	@Column(nullable = false)
+	private String name;
+
+	@Column(nullable = false)
+	private String description;
+
+	@OneToMany(mappedBy = "album", fetch = FetchType.LAZY)
 	private List<Picture> pictureList;
-	
-	//Construtores
-	
-	//Métodos
+
+	public Album(String name, String description, List<Picture> pictureList) {
+		super();
+		this.name = name;
+		this.description = description;
+		this.pictureList = pictureList;
+	}
+
+	public Album(Long id) {
+		super();
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public List<Picture> getPictureList() {
+		return pictureList;
+	}
+
+	public void setPictureList(List<Picture> pictureList) {
+		this.pictureList = pictureList;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 }

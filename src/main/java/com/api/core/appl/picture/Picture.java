@@ -79,4 +79,12 @@ public class Picture implements Serializable {
 	public void setIdAmazonS3(UUID idAmazonS3) {
 		this.idAmazonS3 = idAmazonS3;
 	}
+
+	public Album getAlbum() {
+		return album;
+	}
+
+	public void setAlbum(Album album) {
+		this.album = album;
+	}
 }

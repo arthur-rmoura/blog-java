@@ -6,16 +6,14 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.api.core.appl.picture.Picture;
 
-public interface PictureRepositoryData extends PagingAndSortingRepository<Picture, String> {
+public interface PictureRepositoryData extends PagingAndSortingRepository<Picture, Long> {
 
 	Page<Picture> findAll(Pageable pageable);
 
-	Page<Picture> findByAlbumAndId(Long albumId, Long pictureId, Pageable pageable);
-
 	Page<Picture> findByAlbum(Long albumId, Pageable pageable);
 
-	Page<Picture> findById(Long pictureId, Pageable pageable);
+	Page<Picture> findByAlbumAndName(Long albumId, String pictureName, Pageable pageable);
 
-	Picture findById(Long pictureId);
+	Page<Picture> findByName(String pictureName, Pageable pageable);
 
 }

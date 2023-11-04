@@ -9,7 +9,7 @@ import com.api.core.appl.picture.PictureDTO;
 public interface PictureController  {
 	
 
-	ResponseEntity<ArrayList<PictureDTO>> listPicture(Integer pageNumber, Integer pageSize, Long albumId, Long pictureId);
+	ResponseEntity<ArrayList<PictureDTO>> listPicture(Integer pageNumber, Integer pageSize, Long albumId, String pictureName);
 	
 	ResponseEntity<PictureDTO> getPicture(Long pictureId);
 
