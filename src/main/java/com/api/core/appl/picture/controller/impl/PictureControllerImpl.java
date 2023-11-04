@@ -2,6 +2,9 @@ package com.api.core.appl.picture.controller.impl;
 
 import java.util.ArrayList;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Produces;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,10 +70,12 @@ public class PictureControllerImpl implements PictureController {
 			@ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content) })
 	@PostMapping("/pictures")
 	@ResponseBody
+	@Consumes(value = "application/octet-stream")
+	@Produces(value = "application/octet-stream")
 	@Override
 	public ResponseEntity<PictureDTO> createPicture(
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, description = "Payload da requisição contendo o conteúdo json e arquivo da nova figura a ser inserida", content = {
-					@Content(mediaType = "application/json", schema = @Schema(implementation = PictureDTO.class)) }) @RequestBody PictureDTO pictureDTO) {
+					@Content(mediaType = "application/octet-stream", schema = @Schema(implementation = PictureDTO.class)) }) @RequestBody PictureDTO pictureDTO) {
 
 		pictureDTO = pictureService.createPicture(pictureDTO);
 		return new ResponseEntity<PictureDTO>(pictureDTO, HttpStatus.CREATED);

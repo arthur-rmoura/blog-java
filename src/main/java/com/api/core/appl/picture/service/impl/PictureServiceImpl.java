@@ -112,7 +112,7 @@ public class PictureServiceImpl implements PictureService {
             .build();
 
 		if(pictureDTO.getData() != null && pictureDTO.getData().length > 0) {
-			UtilLibrary.sendObjectBytes(s3, picturesBucketName, picture.getIdAmazonS3().toString(), pictureDTO.getData());
+			UtilLibrary.putObjectBytes(s3, picturesBucketName, picture.getIdAmazonS3().toString(), pictureDTO.getData());
 		}
 		
 		picture = pictureRepository.createPicture(picture); 
@@ -184,7 +184,7 @@ public class PictureServiceImpl implements PictureService {
             .build();
 
 		if(pictureDTO.getData() != null && pictureDTO.getData().length > 0) {
-			UtilLibrary.sendObjectBytes(s3, picturesBucketName, picture.getIdAmazonS3().toString(), pictureDTO.getData());
+			UtilLibrary.putObjectBytes(s3, picturesBucketName, picture.getIdAmazonS3().toString(), pictureDTO.getData());
 		}
 		
 		picture.setId(pictureDTO.getId());

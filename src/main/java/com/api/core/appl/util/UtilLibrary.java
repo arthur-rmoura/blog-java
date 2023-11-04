@@ -7,16 +7,20 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.ResponseBytes;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 public class UtilLibrary {
@@ -49,15 +53,28 @@ public class UtilLibrary {
             return objectBytes.asByteArray();
             
         } catch (S3Exception e) {
-            System.err.println(e.awsErrorDetails().errorMessage());
+        	System.out.println(e.awsErrorDetails().errorMessage());
             return null;
         }
         
     }
     
 
-	public static void sendObjectBytes(S3Client s3, String picturesBucketName, String string, byte[] data) {
-		// TODO Auto-generated method stub
+	public static void putObjectBytes(S3Client s3, String picturesBucketName, String objectKey, byte[] data) {
+	    try {
+            Map<String, String> metadata = new HashMap<>();
+            metadata.put("x-amz-meta-myVal", "test");
+            PutObjectRequest putObject = PutObjectRequest.builder()
+                .bucket(picturesBucketName)
+                .key(objectKey)
+                .metadata(metadata)
+                .build();
+
+            s3.putObject(putObject, RequestBody.fromBytes(data));
+
+        } catch (S3Exception e) {
+        	System.out.println(e.awsErrorDetails().errorMessage());
+        }
 	}
 
 	public static StaticCredentialsProvider getStaticCredentialsProvider() {
