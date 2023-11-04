@@ -84,8 +84,8 @@ public class AlbumServiceImpl implements AlbumService {
 		User user = new User(albumDTO.getUserId());
 		Album album = new Album(albumDTO.getName(), albumDTO.getDescription(), timestampDate, new ArrayList<Picture>(), user);
 
-		albumRepository.createAlbum(album);
-		
+		album = albumRepository.createAlbum(album);
+		albumDTO.setId(album.getId());
 
 		return albumDTO;
 	}
@@ -114,14 +114,31 @@ public class AlbumServiceImpl implements AlbumService {
 	
 	@Override
 	public AlbumDTO updateAlbum(AlbumDTO albumDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+			    .parseCaseInsensitive()
+			    .appendPattern("uuuu-MM-dd HH:mm:ss")
+			    .toFormatter(Locale.ENGLISH);
+		
+		
+		long timestampDate = Instant.now().toEpochMilli() / 1000;
+		if (albumDTO.getDate() != null) {
+			LocalDateTime localDateTime = LocalDateTime.parse(albumDTO.getDate(), formatter);
+			Instant instant = Instant.now();
+			timestampDate = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
+		}
+		
+		User user = new User(albumDTO.getUserId());
+		Album album = new Album(albumDTO.getName(), albumDTO.getDescription(), timestampDate, new ArrayList<Picture>(), user);
+		
+		album.setId(albumDTO.getId());
+		album = albumRepository.updateAlbum(album);
+
+		return albumDTO;
 	}
 
 	@Override
 	public void deleteAlbum(Long albumId) {
-		// TODO Auto-generated method stub
-		
+		albumRepository.deleteAlbum(albumId);
 	}
 
 	@Override

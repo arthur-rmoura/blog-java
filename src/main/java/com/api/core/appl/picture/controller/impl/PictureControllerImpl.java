@@ -37,9 +37,9 @@ public class PictureControllerImpl implements PictureController {
 
 	@Operation(summary = "Recupera Fotos", description = "Recupera Fotos paginados e filtrados por álbum e/ou nome")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Dados recuperados com sucesso.", content = {
+			@ApiResponse(responseCode = "200", description = "Fotos recuperadas com sucesso.", content = {
 					@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PictureDTO.class))) }),
-			@ApiResponse(responseCode = "404", description = "Não Encontrado - Não foram encontrados dados com os parâmetros de entrada fornecidos.", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Não Encontrado - Não foram encontrados fotos com os parâmetros de entrada fornecidos.", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content) })
 	@GetMapping("/pictures")
 	@ResponseBody
@@ -62,7 +62,7 @@ public class PictureControllerImpl implements PictureController {
 
 	@Operation(summary = "Insere foto em álbum", description = "Insere novas fotos em um álbum especificado")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "201", description = "Dados inseridos com sucesso.", content = {
+			@ApiResponse(responseCode = "201", description = "foto inserida com sucesso.", content = {
 					@Content(mediaType = "application/json", schema = @Schema(implementation = PictureDTO.class)) }),
 			@ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content) })
 	@PostMapping("/pictures")
@@ -81,10 +81,10 @@ public class PictureControllerImpl implements PictureController {
 		description = "Recupera uma foto em específico passando como parâmetro o id da foto"
 	)
 	@ApiResponses(value = {
-	        @ApiResponse(responseCode = "200", description = "Dados recuperados com sucesso.", content = {@Content(
+	        @ApiResponse(responseCode = "200", description = "Foto recuperada com sucesso.", content = {@Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = PictureDTO.class))}), 
-	        @ApiResponse(responseCode = "404", description = "Não Encontrado - Não foram encontrados dados com os parâmetros de entrada fornecidos.", content = @Content),
+	        @ApiResponse(responseCode = "404", description = "Não Encontrado - Não foram encontrados fotos com os parâmetros de entrada fornecidos.", content = @Content),
 	        @ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content)
 	})
 	@GetMapping("/pictures/{pictureId}/")

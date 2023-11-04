@@ -36,6 +36,15 @@ public class UserRepositoryImpl implements UserRepository{
 		return userRepositoryData.save(user);
 	}
 
+	@Override
+	public User updateUser(User user) {
+		return userRepositoryData.save(user);
+	}
+	
+	@Override
+	public void deleteUser(Long userId) {
+		userRepositoryData.deleteById(userId);
+	}
 
 	@Override
 	public Page<User> listUsersByBirthDateAndFirstName(Filter filter) {

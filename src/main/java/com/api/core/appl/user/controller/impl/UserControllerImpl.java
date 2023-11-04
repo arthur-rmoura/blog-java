@@ -42,7 +42,7 @@ public class UserControllerImpl implements UserController {
 		description = "Recupera usuários paginados e filtrados por nome e/ou data de nascimento"
 	)
 	@ApiResponses(value = {
-	        @ApiResponse(responseCode = "200", description = "Dados recuperados com sucesso.", content = {@Content(
+	        @ApiResponse(responseCode = "200", description = "Usuários recuperados com sucesso.", content = {@Content(
                     mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = UserDTO.class)))}), 
 	        @ApiResponse(responseCode = "404", description = "Não Encontrado - Não foram encontrados usuários com os parâmetros de entrada fornecidos.", content = @Content),

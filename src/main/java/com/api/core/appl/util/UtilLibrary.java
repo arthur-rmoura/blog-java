@@ -54,6 +54,11 @@ public class UtilLibrary {
         }
         
     }
+    
+
+	public static void sendObjectBytes(S3Client s3, String picturesBucketName, String string, byte[] data) {
+		// TODO Auto-generated method stub
+	}
 
 	public static StaticCredentialsProvider getStaticCredentialsProvider() {
 			/*The user attached to this credentials is only able to access a specific s3 bucket*/
@@ -107,6 +112,5 @@ public class UtilLibrary {
             e.printStackTrace();
             throw new RuntimeException("Error of password encryption!");
         }  
-	}
-          
+	}     
 }

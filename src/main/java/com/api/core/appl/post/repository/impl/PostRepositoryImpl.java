@@ -71,4 +71,16 @@ public class PostRepositoryImpl implements PostRepository{
 		}
 	}
 
+
+	@Override
+	public Post updatePost(Post post) {
+		return postRepositoryData.save(post);
+	}
+
+
+	@Override
+	public void deletePost(Long postId) {
+		postRepositoryData.deleteById(postId);
+	}
+
 }

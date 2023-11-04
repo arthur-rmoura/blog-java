@@ -7,7 +7,7 @@ import com.api.core.appl.util.Filter;
 
 public interface UserRepository {
 
-	User createUser(User dadosPosicao);
+	User createUser(User user);
 
 	Page<User> listUsersByBirthDateAndFirstName(Filter filter);
 
@@ -18,4 +18,8 @@ public interface UserRepository {
 	Page<User> listUsers(Filter filter);
 
 	User findUserById(Filter filter);
+
+	User updateUser(User user);
+
+	void deleteUser(Long userId);
 }

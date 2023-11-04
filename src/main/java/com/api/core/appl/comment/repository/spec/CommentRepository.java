@@ -7,7 +7,7 @@ import com.api.core.appl.util.Filter;
 
 public interface CommentRepository {
 
-	Comment createComment(Comment dadosPosicao);
+	Comment createComment(Comment comment);
 
 	Page<Comment> listCommentsByDateAndUser(Filter filter);
 
@@ -18,4 +18,8 @@ public interface CommentRepository {
 	Page<Comment> listComments(Filter filter);
 
 	Comment findCommentById(Filter filter);
+
+	Comment updateComment(Comment comment);
+	
+	void deleteComment(Long commentId);
 }

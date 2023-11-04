@@ -63,4 +63,17 @@ public class PictureRepositoryImpl implements PictureRepository{
 		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageNumber());
 		return pictureRepositoryData.findByName(filter.getPictureName(), pageable);
 	}
+
+
+	@Override
+	public Picture updatePicture(Picture picture) {
+		return pictureRepositoryData.save(picture);
+	}
+
+
+	@Override
+	public void deletePicture(Long pictureId) {
+		pictureRepositoryData.deleteById(pictureId);
+		
+	}
 }

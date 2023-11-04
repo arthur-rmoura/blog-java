@@ -85,7 +85,8 @@ public class CommentServiceImpl implements CommentService {
 		Post post = new Post(commentDTO.getPostId());
 		Comment comment = new Comment(timestampDate, commentDTO.getTextContent(), user, post);
 
-		commentRepository.createComment(comment);
+		comment = commentRepository.createComment(comment);
+		commentDTO.setId(comment.getId());
 		
 
 		return commentDTO;
@@ -115,14 +116,32 @@ public class CommentServiceImpl implements CommentService {
 	
 	@Override
 	public CommentDTO updateComment(CommentDTO commentDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+			    .parseCaseInsensitive()
+			    .appendPattern("uuuu-MM-dd HH:mm:ss")
+			    .toFormatter(Locale.ENGLISH);
+		
+		
+		long timestampDate = Instant.now().toEpochMilli() / 1000;
+		if (commentDTO.getDate() != null) {
+			LocalDateTime localDateTime = LocalDateTime.parse(commentDTO.getDate(), formatter);
+			Instant instant = Instant.now();
+			timestampDate = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
+		}
+		
+		User user = new User(commentDTO.getUserId());
+		Post post = new Post(commentDTO.getPostId());
+		Comment comment = new Comment(timestampDate, commentDTO.getTextContent(), user, post);
+
+		comment.setId(commentDTO.getId());
+		comment = commentRepository.updateComment(comment);
+
+		return commentDTO;
 	}
 
 	@Override
 	public void deleteComment(Long commentId) {
-		// TODO Auto-generated method stub
-		
+		commentRepository.deleteComment(commentId);
 	}
 
 	@Override

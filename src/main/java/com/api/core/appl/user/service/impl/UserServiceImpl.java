@@ -82,8 +82,8 @@ public class UserServiceImpl implements UserService {
 		
 		User user = new User(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), UtilLibrary.encryptMD5(userDTO.getPassword()), timestampDate);
 
-		userRepository.createUser(user);
-		
+		user = userRepository.createUser(user);
+		userDTO.setId(user.getId());
 
 		return userDTO;
 	}
@@ -112,14 +112,30 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public UserDTO updateUser(UserDTO userDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+			    .parseCaseInsensitive()
+			    .appendPattern("uuuu-MM-dd")
+			    .toFormatter(Locale.ENGLISH);
+		
+		
+		long timestampDate = 0;
+		if (userDTO.getBirthDate() != null) {
+			LocalDateTime localDateTime = LocalDateTime.parse(userDTO.getBirthDate(), formatter);
+			Instant instant = Instant.now();
+			timestampDate = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
+		}
+		
+		User user = new User(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), UtilLibrary.encryptMD5(userDTO.getPassword()), timestampDate);
+
+		user.setId(userDTO.getId());
+		user = userRepository.updateUser(user);
+
+		return userDTO;
 	}
 
 	@Override
 	public void deleteUser(Long userId) {
-		// TODO Auto-generated method stub
-		
+		userRepository.deleteUser(userId);
 	}
 
 }

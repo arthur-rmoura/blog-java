@@ -7,7 +7,7 @@ import com.api.core.appl.util.Filter;
 
 public interface PostRepository {
 
-	Post createPost(Post dadosPosicao);
+	Post createPost(Post post);
 
 	Page<Post> listPostsByDateAndUser(Filter filter);
 
@@ -18,5 +18,9 @@ public interface PostRepository {
 	Page<Post> listPosts(Filter filter);
 
 	Post findPostById(Filter filter);
+
+	Post updatePost(Post post);
+	
+	void deletePost(Long postId);
 
 }

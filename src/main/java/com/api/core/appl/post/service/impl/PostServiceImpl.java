@@ -88,7 +88,8 @@ public class PostServiceImpl implements PostService {
 		User user = new User(postDTO.getUserId());
 		Post post = new Post(timestampDate, postDTO.getTextContent(), new ArrayList<Comment>(), user);
 
-		postRepository.createPost(post);
+		post = postRepository.createPost(post);
+		postDTO.setId(post.getId());
 		
 
 		return postDTO;
@@ -118,14 +119,31 @@ public class PostServiceImpl implements PostService {
 	
 	@Override
 	public PostDTO updatePost(PostDTO postDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+			    .parseCaseInsensitive()
+			    .appendPattern("uuuu-MM-dd HH:mm:ss")
+			    .toFormatter(Locale.ENGLISH);
+		
+		
+		long timestampDate = Instant.now().toEpochMilli() / 1000;
+		if (postDTO.getDate() != null) {
+			LocalDateTime localDateTime = LocalDateTime.parse(postDTO.getDate(), formatter);
+			Instant instant = Instant.now();
+			timestampDate = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
+		}
+		
+		User user = new User(postDTO.getUserId());
+		Post post = new Post(timestampDate, postDTO.getTextContent(), new ArrayList<Comment>(), user);
+
+		post.setId(postDTO.getId());
+		post = postRepository.updatePost(post);
+
+		return postDTO;
 	}
 
 	@Override
 	public void deletePost(Long postId) {
-		// TODO Auto-generated method stub
-		
+		postRepository.deletePost(postId);
 	}
 
 }

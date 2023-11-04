@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.api.core.appl.album.Album;
-import com.api.core.appl.comment.service.spec.CommentService;
 import com.api.core.appl.picture.Picture;
 import com.api.core.appl.picture.PictureDTO;
 import com.api.core.appl.picture.repository.spec.PictureRepository;
@@ -33,9 +32,6 @@ public class PictureServiceImpl implements PictureService {
 
 	@Autowired
 	PictureRepository pictureRepository;
-	
-	@Autowired
-	CommentService poiService;
 	
 	@Value("${picturesBucket.name}")
 	private String picturesBucketName;
@@ -107,9 +103,20 @@ public class PictureServiceImpl implements PictureService {
 		
 		Album album = new Album(pictureDTO.getAlbumId());
 		picture.setAlbum(album);
+		
+		StaticCredentialsProvider staticCredentialsProvider = UtilLibrary.getStaticCredentialsProvider();
+        Region region = Region.SA_EAST_1;
+        S3Client s3 = S3Client.builder()
+            .region(region)
+            .credentialsProvider(staticCredentialsProvider)
+            .build();
 
-		// TODO fazer parte do upload pro S3
-		pictureRepository.createPicture(picture);
+		if(pictureDTO.getData() != null && pictureDTO.getData().length > 0) {
+			UtilLibrary.sendObjectBytes(s3, picturesBucketName, picture.getIdAmazonS3().toString(), pictureDTO.getData());
+		}
+		
+		picture = pictureRepository.createPicture(picture); 
+		pictureDTO.setId(picture.getId());
 		
 
 		return pictureDTO;
@@ -149,14 +156,47 @@ public class PictureServiceImpl implements PictureService {
 
 	@Override
 	public PictureDTO updatePicture(PictureDTO pictureDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+			    .parseCaseInsensitive()
+			    .appendPattern("uuuu-MM-dd HH:mm:ss")
+			    .toFormatter(Locale.ENGLISH);
+		
+		
+		long timestampDate = Instant.now().toEpochMilli() / 1000;
+		if (pictureDTO.getDate() != null) {
+			LocalDateTime localDateTime = LocalDateTime.parse(pictureDTO.getDate(), formatter);
+			Instant instant = Instant.now();
+			timestampDate = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
+		}
+		
+
+		UUID uuid = UUID.randomUUID();
+		Picture picture = new Picture(pictureDTO.getName(), timestampDate, uuid);
+		
+		Album album = new Album(pictureDTO.getAlbumId());
+		picture.setAlbum(album);
+		
+		StaticCredentialsProvider staticCredentialsProvider = UtilLibrary.getStaticCredentialsProvider();
+        Region region = Region.SA_EAST_1;
+        S3Client s3 = S3Client.builder()
+            .region(region)
+            .credentialsProvider(staticCredentialsProvider)
+            .build();
+
+		if(pictureDTO.getData() != null && pictureDTO.getData().length > 0) {
+			UtilLibrary.sendObjectBytes(s3, picturesBucketName, picture.getIdAmazonS3().toString(), pictureDTO.getData());
+		}
+		
+		picture.setId(pictureDTO.getId());
+		picture = pictureRepository.updatePicture(picture);
+
+		return pictureDTO;
 	}
 
 
 	@Override
-	public void deletePicture(Long idPicutre) {
-		// TODO Auto-generated method stub
+	public void deletePicture(Long pictureId) {
+		pictureRepository.deletePicture(pictureId);
 	}
 
 }

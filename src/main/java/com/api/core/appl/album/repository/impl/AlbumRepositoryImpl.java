@@ -36,6 +36,15 @@ public class AlbumRepositoryImpl implements AlbumRepository{
 		return albumRepositoryData.save(album);
 	}
 
+	@Override
+	public Album updateAlbum(Album album) {
+		return albumRepositoryData.save(album);
+	}
+	
+	@Override
+	public void deleteAlbum(Long albumId) {
+		albumRepositoryData.deleteById(albumId);
+	}
 
 	@Override
 	public Page<Album> listAlbumsByDate(Filter filter) {

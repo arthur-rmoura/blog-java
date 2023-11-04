@@ -43,7 +43,7 @@ public class AlbumControllerImpl implements AlbumController {
 		description = "Recupera álbums paginados e filtrados por data e/ou usuário"
 	)
 	@ApiResponses(value = {
-	        @ApiResponse(responseCode = "200", description = "Dados recuperados com sucesso.", content = {@Content(
+	        @ApiResponse(responseCode = "200", description = "Álbuns recuperados com sucesso.", content = {@Content(
                     mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = AlbumDTO.class)))}), 
 	        @ApiResponse(responseCode = "404", description = "Não Encontrado - Não foram encontrados álbums com os parâmetros de entrada fornecidos.", content = @Content),

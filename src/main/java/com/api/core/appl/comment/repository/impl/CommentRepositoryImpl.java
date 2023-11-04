@@ -69,4 +69,16 @@ public class CommentRepositoryImpl implements CommentRepository{
 		}
 	}
 
+
+	@Override
+	public Comment updateComment(Comment comment) {
+		return commentRepositoryData.save(comment);
+	}
+
+
+	@Override
+	public void deleteComment(Long commentId) {
+		commentRepositoryData.deleteById(commentId);
+	}
+
 }

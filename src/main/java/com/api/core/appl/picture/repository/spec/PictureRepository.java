@@ -20,4 +20,8 @@ public interface PictureRepository {
 
 	Page<Picture> findPictureByName(Filter filter);
 
+	Picture updatePicture(Picture picture);
+
+	void deletePicture(Long pictureId);
+
 }

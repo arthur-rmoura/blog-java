@@ -7,7 +7,7 @@ import com.api.core.appl.util.Filter;
 
 public interface AlbumRepository {
 
-	Album createAlbum(Album dadosPosicao);
+	Album createAlbum(Album album);
 
 	Page<Album> listAlbumsByDateAndUser(Filter filter);
 
@@ -18,4 +18,8 @@ public interface AlbumRepository {
 	Page<Album> listAlbums(Filter filter);
 
 	Album findAlbumById(Filter filter);
+
+	Album updateAlbum(Album album);
+
+	void deleteAlbum(Long albumId);
 }
