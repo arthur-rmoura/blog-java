@@ -8,7 +8,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
@@ -31,11 +30,9 @@ public class Comment implements Serializable {
 	private String textContent;
 
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "id", nullable = false)
 	private User user;
 
 	@OneToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "id", nullable = false)
 	private Post post;
 
 	protected Comment() {

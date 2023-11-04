@@ -37,7 +37,6 @@ public class UserControllerImpl implements UserController {
 	@Autowired
 	UserService userService;
 	
-	
 	@Operation(	
 		summary = "Recupera usuários", 
 		description = "Recupera usuários paginados e filtrados por nome e/ou data de nascimento"

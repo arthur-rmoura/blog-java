@@ -127,8 +127,20 @@ public class CommentServiceImpl implements CommentService {
 
 	@Override
 	public ArrayList<CommentDTO> convertToDTO(List<Comment> commentList) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<CommentDTO> commentDTOList = new ArrayList<CommentDTO>();
+		DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+			    .parseCaseInsensitive()
+			    .appendPattern("uuuu-MM-dd")
+			    .toFormatter(Locale.ENGLISH);
+		Instant instant = Instant.now();
+
+		for(Comment comment : commentList) {
+			LocalDateTime localDateTime = LocalDateTime.ofEpochSecond(comment.getDateTimestamp().longValue(), 0, ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
+			CommentDTO commentDTO = new CommentDTO(comment.getId(), localDateTime.format(formatter), comment.getTextContent(), comment.getUser().getId(), comment.getPost().getId());
+			commentDTOList.add(commentDTO);
+		}
+		
+		return commentDTOList;
 	}
 
 }

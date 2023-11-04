@@ -1,5 +1,7 @@
 package com.api.core.appl.util;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -73,4 +75,38 @@ public class UtilLibrary {
 		long dateTimestamp = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
 		return dateTimestamp;
 	}
+
+	public static String encryptMD5(String password) {
+		
+		String encryptedPassword = null;  
+		
+        try {  
+        	
+            /* MessageDigest instance for MD5. */  
+            MessageDigest m = MessageDigest.getInstance("MD5");  
+              
+            /* Add plain-text password bytes to digest using MD5 update() method. */  
+            m.update(password.getBytes());  
+              
+            /* Convert the hash value into bytes */   
+            byte[] bytes = m.digest();  
+              
+            /* The bytes array has bytes in decimal form. Converting it into hexadecimal format. */  
+            StringBuilder s = new StringBuilder();  
+            for(int i=0; i< bytes.length ;i++)  
+            {  
+                s.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));  
+            }  
+              
+            /* Complete hashed password in hexadecimal format */  
+            encryptedPassword = s.toString();
+            
+            return encryptedPassword;
+        }   
+        catch (NoSuchAlgorithmException e) {  
+            e.printStackTrace();
+            throw new RuntimeException("Error of password encryption!");
+        }  
+	}
+          
 }

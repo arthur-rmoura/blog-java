@@ -18,6 +18,7 @@ import com.api.core.appl.user.UserDTO;
 import com.api.core.appl.user.repository.spec.UserRepository;
 import com.api.core.appl.user.service.spec.UserService;
 import com.api.core.appl.util.Filter;
+import com.api.core.appl.util.UtilLibrary;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -50,9 +51,9 @@ public class UserServiceImpl implements UserService {
 			    .parseCaseInsensitive()
 			    .appendPattern("uuuu-MM-dd")
 			    .toFormatter(Locale.ENGLISH);
+		Instant instant = Instant.now();
 		
 		ArrayList<UserDTO> userDTOList = new ArrayList<>();
-		Instant instant = Instant.now();
 		
 		for(User user : userList) {
 			LocalDateTime localDateTime = LocalDateTime.ofEpochSecond(user.getBirthDateTimestamp().longValue(), 0, ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
@@ -79,7 +80,7 @@ public class UserServiceImpl implements UserService {
 			timestampDate = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
 		}
 		
-		User user = new User(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), userDTO.getPassword(), timestampDate);
+		User user = new User(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), UtilLibrary.encryptMD5(userDTO.getPassword()), timestampDate);
 
 		userRepository.createUser(user);
 		

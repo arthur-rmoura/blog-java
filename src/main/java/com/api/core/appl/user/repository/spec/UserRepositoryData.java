@@ -14,9 +14,9 @@ public interface UserRepositoryData extends PagingAndSortingRepository<User, Lon
 
 	Page<User> findByFirstName(String firstName, Pageable pageable);
 
-	Page<User> findByBirthDate(long dateTimestampF1, Pageable pageable);
+	Page<User> findByBirthDateTimestamp(long dateTimestampF1, Pageable pageable);
 
-	Page<User> findByBirthDateAndFirstName(long dateTimestamp, String firstName, Pageable pageable);
+	Page<User> findByBirthDateTimestampAndFirstName(long dateTimestamp, String firstName, Pageable pageable);
 
 	
 }

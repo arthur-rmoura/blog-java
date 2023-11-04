@@ -40,13 +40,13 @@ public class UserRepositoryImpl implements UserRepository{
 	@Override
 	public Page<User> listUsersByBirthDateAndFirstName(Filter filter) {
 		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
-		return userRepositoryData.findByBirthDateAndFirstName(UtilLibrary.getDateTimestampF1(filter.getBirthDate()), filter.getFirstName(), pageable);
+		return userRepositoryData.findByBirthDateTimestampAndFirstName(UtilLibrary.getDateTimestampF1(filter.getBirthDate()), filter.getFirstName(), pageable);
 	}
 	
 	@Override
 	public Page<User> listUsersByBirthDate(Filter filter) {
 		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
-		return userRepositoryData.findByBirthDate(UtilLibrary.getDateTimestampF1(filter.getBirthDate()), pageable);
+		return userRepositoryData.findByBirthDateTimestamp(UtilLibrary.getDateTimestampF1(filter.getBirthDate()), pageable);
 	}
 
 

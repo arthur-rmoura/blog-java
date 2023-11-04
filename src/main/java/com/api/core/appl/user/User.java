@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.api.core.appl.album.Album;
 import com.api.core.appl.comment.Comment;
 import com.api.core.appl.post.Post;
 
@@ -32,7 +33,7 @@ public class User implements Serializable {
 	@Column(nullable = false, length = 100)
 	private String email;
 
-	@Column(nullable = false, length = 100)
+	@Column(nullable = false, length = 255)
 	private String password;
 
 	@Column(nullable = true)
@@ -43,6 +44,9 @@ public class User implements Serializable {
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private List<Comment> commentList;
+	
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	private List<Album> albumList;
 
 	protected User() {
 		// No args constructor required by JPA
@@ -127,4 +131,11 @@ public class User implements Serializable {
 		this.commentList = commentList;
 	}
 
+	public List<Album> getAlbumList() {
+		return albumList;
+	}
+
+	public void setAlbumList(List<Album> albumList) {
+		this.albumList = albumList;
+	}
 }

@@ -10,8 +10,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import com.api.core.appl.picture.Picture;
+import com.api.core.appl.user.User;
 
 @Entity
 public class Album implements Serializable {
@@ -24,18 +26,26 @@ public class Album implements Serializable {
 
 	@Column(nullable = false)
 	private String name;
+	
+	@Column(nullable = true)
+	private Long dateTimestamp;
 
 	@Column(nullable = false)
 	private String description;
 
 	@OneToMany(mappedBy = "album", fetch = FetchType.LAZY)
 	private List<Picture> pictureList;
+	
+	@OneToOne(optional = false, fetch = FetchType.LAZY)
+	private User user;
 
-	public Album(String name, String description, List<Picture> pictureList) {
+	public Album(String name, String description, Long dateTimestamp, List<Picture> pictureList, User user) {
 		super();
 		this.name = name;
 		this.description = description;
+		this.dateTimestamp = dateTimestamp;
 		this.pictureList = pictureList;
+		this.user = user;
 	}
 
 	public Album(Long id) {
@@ -59,6 +69,14 @@ public class Album implements Serializable {
 		this.description = description;
 	}
 
+	public Long getDateTimestamp() {
+		return dateTimestamp;
+	}
+
+	public void setDateTimestamp(Long dateTimestamp) {
+		this.dateTimestamp = dateTimestamp;
+	}
+
 	public List<Picture> getPictureList() {
 		return pictureList;
 	}
@@ -75,4 +93,11 @@ public class Album implements Serializable {
 		this.id = id;
 	}
 
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 }

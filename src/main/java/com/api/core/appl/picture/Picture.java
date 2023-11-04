@@ -9,7 +9,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.api.core.appl.album.Album;
@@ -33,7 +32,6 @@ public class Picture implements Serializable {
 	private UUID idAmazonS3;
 
 	@ManyToOne(optional=false, fetch = FetchType.LAZY)
-	@JoinColumn(name="id", nullable=false)
 	private Album album;
 
 	protected Picture() {
