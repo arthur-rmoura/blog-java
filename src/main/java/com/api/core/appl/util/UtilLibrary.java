@@ -11,10 +11,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -23,13 +21,9 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
+@Component
 public class UtilLibrary {
 	
-	@Value("${picturesBucket.accessKey}")
-	private static String accessKey;
-	
-	@Value("${picturesBucket.secretKey}")
-	private static String secretKey;
 	
 	public static String secondsToTime(Long totalSeconds) {
 		
@@ -75,15 +69,6 @@ public class UtilLibrary {
         } catch (S3Exception e) {
         	System.out.println(e.awsErrorDetails().errorMessage());
         }
-	}
-
-	public static StaticCredentialsProvider getStaticCredentialsProvider() {
-			/*The user attached to this credentials is only able to access a specific s3 bucket*/
-           
-            StaticCredentialsProvider staticCredentialsProvider = StaticCredentialsProvider.create(
-                    AwsBasicCredentials.create(accessKey, secretKey));
-            
-            return staticCredentialsProvider;
 	}
 
 	public static long getDateTimestampF1(String date) {

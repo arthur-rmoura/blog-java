@@ -3,9 +3,10 @@ package com.api.core.appl.tests.unit;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.api.core.appl.util.UtilLibrary;
+import com.api.core.appl.util.UtilVariables;
 
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -13,14 +14,14 @@ import software.amazon.awssdk.services.s3.S3Client;
 
 class S3OperationsTest {
 
-	@Value("${pictureBucket.name}")
-	private String picturesBucketName;
+	@Autowired
+	UtilVariables utilVariables;
 	
 	@Test
 	void test() {
 		
 		try {
-			StaticCredentialsProvider staticCredentialsProvider = UtilLibrary.getStaticCredentialsProvider();
+			StaticCredentialsProvider staticCredentialsProvider = utilVariables.getStaticCredentialsProvider();
 	        Region region = Region.SA_EAST_1;
 	        S3Client s3 = S3Client.builder()
 	            .region(region)

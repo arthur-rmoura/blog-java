@@ -110,6 +110,13 @@ public class AlbumServiceImpl implements AlbumService {
 
 		return albumDTO;
 	}
+	
+	@Override
+	public Album getAlbumEntity(Filter filter) {
+		
+		Album album = albumRepository.findAlbumById(filter);
+		return album;
+	}
 
 	
 	@Override
@@ -157,6 +164,11 @@ public class AlbumServiceImpl implements AlbumService {
 		}
 		
 		return albumDTOList;
+	}
+
+	@Override
+	public Album createAlbumEntity(Album album) {
+		return albumRepository.createAlbum(album);
 	}
 
 }

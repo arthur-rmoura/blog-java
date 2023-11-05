@@ -11,17 +11,22 @@ import java.util.Locale;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.api.core.appl.album.Album;
+import com.api.core.appl.album.service.spec.AlbumService;
 import com.api.core.appl.picture.Picture;
 import com.api.core.appl.picture.PictureDTO;
 import com.api.core.appl.picture.repository.spec.PictureRepository;
 import com.api.core.appl.picture.service.spec.PictureService;
+import com.api.core.appl.user.User;
 import com.api.core.appl.util.Filter;
 import com.api.core.appl.util.UtilLibrary;
+import com.api.core.appl.util.UtilVariables;
 
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -33,8 +38,12 @@ public class PictureServiceImpl implements PictureService {
 	@Autowired
 	PictureRepository pictureRepository;
 	
-	@Value("${picturesBucket.name}")
-	private String picturesBucketName;
+	@Autowired
+	UtilVariables utilVariables;
+	
+	@Autowired
+	AlbumService albumService;
+	
 
 	@Override
 	public ArrayList<PictureDTO> listPicture(Filter filter) {
@@ -57,7 +66,7 @@ public class PictureServiceImpl implements PictureService {
 		ArrayList<PictureDTO> listaPictureDTO = new ArrayList<>();
 		
 
-		StaticCredentialsProvider staticCredentialsProvider = UtilLibrary.getStaticCredentialsProvider();
+		StaticCredentialsProvider staticCredentialsProvider = utilVariables.getStaticCredentialsProvider();
         Region region = Region.SA_EAST_1;
         S3Client s3 = S3Client.builder()
             .region(region)
@@ -70,7 +79,7 @@ public class PictureServiceImpl implements PictureService {
 			    .toFormatter(Locale.ENGLISH);
 
 		for (Picture picture : listaPicture) {
-			byte[] pictureData = UtilLibrary.getObjectBytes(s3, picturesBucketName, picture.getIdAmazonS3().toString());
+			byte[] pictureData = UtilLibrary.getObjectBytes(s3, utilVariables.getPicturesBucketName(), picture.getIdAmazonS3().toString());
 			Instant instant = Instant.now();
 	        LocalDateTime localDateTime = LocalDateTime.ofEpochSecond(picture.getDateTimestamp().longValue(), 0, ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
 			PictureDTO pictureDTO = new PictureDTO(picture.getId(), picture.getName(), localDateTime.format(formatter), pictureData, picture.getAlbum().getId());
@@ -82,6 +91,7 @@ public class PictureServiceImpl implements PictureService {
 	
 
 	@Override
+	@Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRES_NEW)
 	public PictureDTO createPicture(PictureDTO pictureDTO) {
 		
 		DateTimeFormatter formatter = new DateTimeFormatterBuilder()
@@ -101,10 +111,19 @@ public class PictureServiceImpl implements PictureService {
 		UUID uuid = UUID.randomUUID();
 		Picture picture = new Picture(pictureDTO.getName(), timestampDate, uuid);
 		
-		Album album = new Album(pictureDTO.getAlbumId());
+		Filter filter = new Filter();
+		filter.setAlbumId(pictureDTO.getAlbumId());
+		Album album = albumService.getAlbumEntity(filter);
+		
+		if(album.getId() == null) {
+			album.setId(pictureDTO.getAlbumId());
+			User user = new User(1L); //TODO pegar o id da sessão do usuário
+			album.setUser(user);
+		}
+		album = albumService.createAlbumEntity(album);
 		picture.setAlbum(album);
 		
-		StaticCredentialsProvider staticCredentialsProvider = UtilLibrary.getStaticCredentialsProvider();
+		StaticCredentialsProvider staticCredentialsProvider = utilVariables.getStaticCredentialsProvider();
         Region region = Region.SA_EAST_1;
         S3Client s3 = S3Client.builder()
             .region(region)
@@ -112,7 +131,7 @@ public class PictureServiceImpl implements PictureService {
             .build();
 
 		if(pictureDTO.getData() != null && pictureDTO.getData().length > 0) {
-			UtilLibrary.putObjectBytes(s3, picturesBucketName, picture.getIdAmazonS3().toString(), pictureDTO.getData());
+			UtilLibrary.putObjectBytes(s3, utilVariables.getPicturesBucketName(), picture.getIdAmazonS3().toString(), pictureDTO.getData());
 		}
 		
 		picture = pictureRepository.createPicture(picture); 
@@ -133,7 +152,7 @@ public class PictureServiceImpl implements PictureService {
 			return pictureDTO;
 		}
 		
-		StaticCredentialsProvider staticCredentialsProvider = UtilLibrary.getStaticCredentialsProvider();
+		StaticCredentialsProvider staticCredentialsProvider = utilVariables.getStaticCredentialsProvider();
         Region region = Region.SA_EAST_1;
         S3Client s3 = S3Client.builder()
             .region(region)
@@ -145,7 +164,7 @@ public class PictureServiceImpl implements PictureService {
 			    .appendPattern("uuuu-MM-dd HH:mm:ss")
 			    .toFormatter(Locale.ENGLISH);
         
-        byte[] pictureData = UtilLibrary.getObjectBytes(s3, picturesBucketName, picture.getIdAmazonS3().toString());
+        byte[] pictureData = UtilLibrary.getObjectBytes(s3, utilVariables.getPicturesBucketName(), picture.getIdAmazonS3().toString());
         Instant instant = Instant.now();
         LocalDateTime localDateTime = LocalDateTime.ofEpochSecond(picture.getDateTimestamp().longValue(), 0, ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
         PictureDTO pictureDTO = new PictureDTO(picture.getId(), picture.getName(), localDateTime.format(formatter), pictureData,  picture.getAlbum().getId());
@@ -176,7 +195,7 @@ public class PictureServiceImpl implements PictureService {
 		Album album = new Album(pictureDTO.getAlbumId());
 		picture.setAlbum(album);
 		
-		StaticCredentialsProvider staticCredentialsProvider = UtilLibrary.getStaticCredentialsProvider();
+		StaticCredentialsProvider staticCredentialsProvider = utilVariables.getStaticCredentialsProvider();
         Region region = Region.SA_EAST_1;
         S3Client s3 = S3Client.builder()
             .region(region)
@@ -184,7 +203,7 @@ public class PictureServiceImpl implements PictureService {
             .build();
 
 		if(pictureDTO.getData() != null && pictureDTO.getData().length > 0) {
-			UtilLibrary.putObjectBytes(s3, picturesBucketName, picture.getIdAmazonS3().toString(), pictureDTO.getData());
+			UtilLibrary.putObjectBytes(s3, utilVariables.getPicturesBucketName(), picture.getIdAmazonS3().toString(), pictureDTO.getData());
 		}
 		
 		picture.setId(pictureDTO.getId());

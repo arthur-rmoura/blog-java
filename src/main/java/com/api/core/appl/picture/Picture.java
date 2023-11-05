@@ -3,6 +3,7 @@ package com.api.core.appl.picture;
 import java.io.Serializable;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -31,7 +32,7 @@ public class Picture implements Serializable {
 	@Column(nullable = false, name = "idAmazonS3", columnDefinition = "VARCHAR(255)")
 	private UUID idAmazonS3;
 
-	@ManyToOne(optional=false, fetch = FetchType.LAZY)
+	@ManyToOne(optional=false, fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	private Album album;
 
 	protected Picture() {

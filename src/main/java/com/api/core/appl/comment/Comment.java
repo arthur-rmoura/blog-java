@@ -40,12 +40,11 @@ public class Comment implements Serializable {
 		// Defined as protected, since it shouldn't be used directly
 	}
 
-	public Comment(Long dateTimestamp, String textContent, User user, Post post) {
+	public Comment(Long dateTimestamp, String textContent, User user) {
 		super();
 		this.dateTimestamp = dateTimestamp;
 		this.textContent = textContent;
 		this.user = user;
-		this.post = post;
 	}
 
 	public Long getDateTimestamp() {

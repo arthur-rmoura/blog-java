@@ -65,7 +65,7 @@ public class CommentRepositoryImpl implements CommentRepository{
 			return comment;
 		}
 		catch (NoSuchElementException  e) {
-			return new Comment(0L, "", null, null);
+			return new Comment(0L, "", null);
 		}
 	}
 

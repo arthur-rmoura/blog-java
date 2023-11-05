@@ -85,7 +85,7 @@ public class PostServiceImpl implements PostService {
 			timestampDate = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
 		}
 		
-		User user = new User(postDTO.getUserId());
+		User user = new User(1L); //TODO pegar o id da sessão do usuário
 		Post post = new Post(timestampDate, postDTO.getTextContent(), new ArrayList<Comment>(), user);
 
 		post = postRepository.createPost(post);

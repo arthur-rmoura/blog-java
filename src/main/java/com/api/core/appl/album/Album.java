@@ -24,13 +24,13 @@ public class Album implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private String name;
 	
 	@Column(nullable = true)
 	private Long dateTimestamp;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private String description;
 
 	@OneToMany(mappedBy = "album", fetch = FetchType.LAZY)
@@ -38,6 +38,11 @@ public class Album implements Serializable {
 	
 	@OneToOne(optional = false, fetch = FetchType.LAZY)
 	private User user;
+	
+	protected Album() {
+		// No args constructor required by JPA
+		// Defined as protected, since it shouldn't be used directly
+	}
 
 	public Album(String name, String description, Long dateTimestamp, List<Picture> pictureList, User user) {
 		super();

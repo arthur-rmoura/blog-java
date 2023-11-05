@@ -21,4 +21,8 @@ public interface AlbumService {
 
 	ArrayList<AlbumDTO> convertToDTO(List<Album> albumList);
 
+	Album getAlbumEntity(Filter filter);
+
+	Album createAlbumEntity(Album album);
+
 }

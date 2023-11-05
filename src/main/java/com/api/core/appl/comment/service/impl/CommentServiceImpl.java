@@ -18,6 +18,7 @@ import com.api.core.appl.comment.CommentDTO;
 import com.api.core.appl.comment.repository.spec.CommentRepository;
 import com.api.core.appl.comment.service.spec.CommentService;
 import com.api.core.appl.post.Post;
+import com.api.core.appl.post.service.spec.PostService;
 import com.api.core.appl.user.User;
 import com.api.core.appl.util.Filter;
 
@@ -26,6 +27,9 @@ public class CommentServiceImpl implements CommentService {
 
 	@Autowired
 	CommentRepository commentRepository;
+	
+	@Autowired
+	PostService postService;
 	
 	@Override
 	public ArrayList<CommentDTO> listComment(Filter filter) {
@@ -81,10 +85,18 @@ public class CommentServiceImpl implements CommentService {
 			timestampDate = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
 		}
 		
-		User user = new User(commentDTO.getUserId());
-		Post post = new Post(commentDTO.getPostId());
-		Comment comment = new Comment(timestampDate, commentDTO.getTextContent(), user, post);
+		User user = new User(1L); //TODO pegar o id da sessão do usuário
+		Comment comment = new Comment(timestampDate, commentDTO.getTextContent(), user);
+		
+		Filter filter = new Filter();
+		filter.setPostId(commentDTO.getPostId());
+		Post post = postService.getPostEntity(filter);
+		
+		if(post.getId() == null) {
+			throw new RuntimeException("The post doesn't exist");
+		}
 
+		comment.setPost(post);
 		comment = commentRepository.createComment(comment);
 		commentDTO.setId(comment.getId());
 		
@@ -129,9 +141,10 @@ public class CommentServiceImpl implements CommentService {
 			timestampDate = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
 		}
 		
-		User user = new User(commentDTO.getUserId());
+		User user = new User(1L); //TODO pegar o id da sessão do usuário
 		Post post = new Post(commentDTO.getPostId());
-		Comment comment = new Comment(timestampDate, commentDTO.getTextContent(), user, post);
+		//TODO -> verificar também os updates
+		Comment comment = new Comment(timestampDate, commentDTO.getTextContent(), user);
 
 		comment.setId(commentDTO.getId());
 		comment = commentRepository.updateComment(comment);
