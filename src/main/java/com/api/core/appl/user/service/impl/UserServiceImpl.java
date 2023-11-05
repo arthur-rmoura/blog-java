@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -67,17 +68,14 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDTO createUser(UserDTO userDTO) {
 		
-		DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-			    .parseCaseInsensitive()
-			    .appendPattern("uuuu-MM-dd")
-			    .toFormatter(Locale.ENGLISH);
-		
-		
-		long timestampDate = 0;
+		long timestampDate = Instant.now().toEpochMilli() / 1000;
 		if (userDTO.getBirthDate() != null) {
-			LocalDateTime localDateTime = LocalDateTime.parse(userDTO.getBirthDate(), formatter);
-			Instant instant = Instant.now();
-			timestampDate = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
+			try {
+				timestampDate = UtilLibrary.getDateTimestampF1(userDTO.getBirthDate());
+			}
+			catch (DateTimeParseException e) {
+				timestampDate = UtilLibrary.getDateTimestampF2(userDTO.getBirthDate());
+			}
 		}
 		
 		User user = new User(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), UtilLibrary.encryptMD5(userDTO.getPassword()), timestampDate);
@@ -108,21 +106,24 @@ public class UserServiceImpl implements UserService {
 
 		return userDTO;
 	}
+	
+	@Override
+	public User getUserEntity(Filter filter) {
+		return userRepository.findUserById(filter);
+	}
 
 	
 	@Override
 	public UserDTO updateUser(UserDTO userDTO) {
-		DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-			    .parseCaseInsensitive()
-			    .appendPattern("uuuu-MM-dd")
-			    .toFormatter(Locale.ENGLISH);
 		
-		
-		long timestampDate = 0;
+		long timestampDate = Instant.now().toEpochMilli() / 1000;
 		if (userDTO.getBirthDate() != null) {
-			LocalDateTime localDateTime = LocalDateTime.parse(userDTO.getBirthDate(), formatter);
-			Instant instant = Instant.now();
-			timestampDate = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
+			try {
+				timestampDate = UtilLibrary.getDateTimestampF1(userDTO.getBirthDate());
+			}
+			catch (DateTimeParseException e) {
+				timestampDate = UtilLibrary.getDateTimestampF2(userDTO.getBirthDate());
+			}
 		}
 		
 		User user = new User(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), UtilLibrary.encryptMD5(userDTO.getPassword()), timestampDate);

@@ -1,7 +1,6 @@
 package com.api.core.appl.picture;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -29,8 +28,8 @@ public class Picture implements Serializable {
 	@Column(nullable = true)
 	private Long dateTimestamp;
 
-	@Column(nullable = false, name = "idAmazonS3", columnDefinition = "VARCHAR(255)")
-	private UUID idAmazonS3;
+	@Column(nullable = false)
+	private String idAmazonS3;
 
 	@ManyToOne(optional=false, fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	private Album album;
@@ -40,7 +39,7 @@ public class Picture implements Serializable {
 		// Defined as protected, since it shouldn't be used directly
 	}
 
-	public Picture(String name, Long dateTimestamp, UUID idAmazonS3) {
+	public Picture(String name, Long dateTimestamp, String idAmazonS3) {
 		super();
 		this.name = name;
 		this.dateTimestamp = dateTimestamp;
@@ -71,11 +70,11 @@ public class Picture implements Serializable {
 		this.dateTimestamp = dateTimestamp;
 	}
 
-	public UUID getIdAmazonS3() {
+	public String getIdAmazonS3() {
 		return idAmazonS3;
 	}
 
-	public void setIdAmazonS3(UUID idAmazonS3) {
+	public void setIdAmazonS3(String idAmazonS3) {
 		this.idAmazonS3 = idAmazonS3;
 	}
 

@@ -109,7 +109,7 @@ public class CommentControllerImpl implements CommentController {
 		        @ApiResponse(responseCode = "404", description = "Não Encontrado - Não foram encontrados comentários com os parâmetros de entrada fornecidos.", content = @Content),
 		        @ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content)
 		})
-		@GetMapping("/comments/{commentId}/")
+		@GetMapping("/comments/{commentId}")
 		@ResponseBody
 		@Override
 		public ResponseEntity<CommentDTO> getComment(
@@ -129,7 +129,7 @@ public class CommentControllerImpl implements CommentController {
 				@ApiResponse(responseCode = "200", description = "Comentário atualizado com sucesso.", content = {
 						@Content(mediaType = "application/json", schema = @Schema(implementation = CommentDTO.class)) }),
 				@ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content) })
-		@PutMapping("/comments/{commentId}/")
+		@PutMapping("/comments/{commentId}")
 		@ResponseBody
 		@Override
 		public ResponseEntity<CommentDTO> updateComment(
@@ -147,7 +147,7 @@ public class CommentControllerImpl implements CommentController {
 				@ApiResponse(responseCode = "204", description = "Comentário removido com sucesso.", content = {
 						@Content(mediaType = "application/json", schema = @Schema(implementation = CommentDTO.class)) }),
 				@ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content) })
-		@DeleteMapping("/comments/{commentId}/")
+		@DeleteMapping("/comments/{commentId}")
 		@ResponseBody
 		@Override
 		public ResponseEntity<CommentDTO> deleteComment(

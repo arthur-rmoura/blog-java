@@ -71,8 +71,8 @@ public class AlbumControllerImpl implements AlbumController {
 	
 	
 	@Operation(	
-			summary = "Insere novos Comentários", 
-			description = "Insere novos Comentários"
+			summary = "Insere novos Álbuns", 
+			description = "Insere novos Álbuns"
 		)
 		@ApiResponses(value = {
 		        @ApiResponse(responseCode = "201", description = "Comentário inserido com sucesso.", content = {@Content(
@@ -109,7 +109,7 @@ public class AlbumControllerImpl implements AlbumController {
 		        @ApiResponse(responseCode = "404", description = "Não Encontrado - Não foram encontrados álbums com os parâmetros de entrada fornecidos.", content = @Content),
 		        @ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content)
 		})
-		@GetMapping("/albums/{albumId}/")
+		@GetMapping("/albums/{albumId}")
 		@ResponseBody
 		@Override
 		public ResponseEntity<AlbumDTO> getAlbum(
@@ -129,7 +129,7 @@ public class AlbumControllerImpl implements AlbumController {
 				@ApiResponse(responseCode = "200", description = "Comentário atualizado com sucesso.", content = {
 						@Content(mediaType = "application/json", schema = @Schema(implementation = AlbumDTO.class)) }),
 				@ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content) })
-		@PutMapping("/albums/{albumId}/")
+		@PutMapping("/albums/{albumId}")
 		@ResponseBody
 		@Override
 		public ResponseEntity<AlbumDTO> updateAlbum(
@@ -147,7 +147,7 @@ public class AlbumControllerImpl implements AlbumController {
 				@ApiResponse(responseCode = "204", description = "Comentário removido com sucesso.", content = {
 						@Content(mediaType = "application/json", schema = @Schema(implementation = AlbumDTO.class)) }),
 				@ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content) })
-		@DeleteMapping("/albums/{albumId}/")
+		@DeleteMapping("/albums/{albumId}")
 		@ResponseBody
 		@Override
 		public ResponseEntity<AlbumDTO> deleteAlbum(

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.api.core.appl.comment.Comment;
+import com.api.core.appl.user.User;
 
 
 public interface CommentRepositoryData extends PagingAndSortingRepository<Comment, Long> {
@@ -14,10 +15,9 @@ public interface CommentRepositoryData extends PagingAndSortingRepository<Commen
 
 	Page<Comment> findByDateTimestamp(long dateTimestampF1, Pageable pageable);
 
-	Page<Comment> findByDateTimestampAndUser(long dateTimestampF1, Long userId, Pageable pageable);
+	Page<Comment> findByDateTimestampAndUser(long dateTimestampF1, User user, Pageable pageable);
 
-	//@Query("SELECT dp FROM DadosPosicao dp WHERE dp.epochSecondPosicao between :timestampPosicaoInicio and :timestampPosicaoFim and dp.timezonePosicao = :timezonePosicao")
-	Page<Comment> findByUser(Long userId, Pageable pageable);
+	Page<Comment> findByUser(User user, Pageable pageable);
 
 	
 }

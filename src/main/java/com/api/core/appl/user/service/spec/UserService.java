@@ -2,6 +2,7 @@ package com.api.core.appl.user.service.spec;
 
 import java.util.ArrayList;
 
+import com.api.core.appl.user.User;
 import com.api.core.appl.user.UserDTO;
 import com.api.core.appl.util.Filter;
 
@@ -16,5 +17,7 @@ public interface UserService {
 	UserDTO updateUser(UserDTO userDTO);
 
 	void deleteUser(Long userId);
+
+	User getUserEntity(Filter filter);
 
 }

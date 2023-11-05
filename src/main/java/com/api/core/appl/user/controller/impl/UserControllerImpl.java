@@ -108,7 +108,7 @@ public class UserControllerImpl implements UserController {
 		        @ApiResponse(responseCode = "404", description = "Não Encontrado - Não foram encontrados usuários com os parâmetros de entrada fornecidos.", content = @Content),
 		        @ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content)
 		})
-		@GetMapping("/users/{userId}/")
+		@GetMapping("/users/{userId}")
 		@ResponseBody
 		@Override
 		public ResponseEntity<UserDTO> getUser(
@@ -128,7 +128,7 @@ public class UserControllerImpl implements UserController {
 				@ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso.", content = {
 						@Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class)) }),
 				@ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content) })
-		@PutMapping("/users/{userId}/")
+		@PutMapping("/users/{userId}")
 		@ResponseBody
 		@Override
 		public ResponseEntity<UserDTO> updateUser(
@@ -146,7 +146,7 @@ public class UserControllerImpl implements UserController {
 				@ApiResponse(responseCode = "204", description = "Usuário removido com sucesso.", content = {
 						@Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class)) }),
 				@ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content) })
-		@DeleteMapping("/users/{userId}/")
+		@DeleteMapping("/users/{userId}")
 		@ResponseBody
 		@Override
 		public ResponseEntity<UserDTO> deleteUser(

@@ -1,6 +1,7 @@
 package com.api.core.appl.post.repository.impl;
 
 
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.api.core.appl.post.Post;
 import com.api.core.appl.post.repository.spec.PostRepository;
 import com.api.core.appl.post.repository.spec.PostRepositoryData;
+import com.api.core.appl.user.User;
 import com.api.core.appl.util.Filter;
 import com.api.core.appl.util.UtilLibrary;
 
@@ -42,20 +44,44 @@ public class PostRepositoryImpl implements PostRepository{
 	@Override
 	public Page<Post> listPostsByDate(Filter filter) {
 		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
-		return postRepositoryData.findByDateTimestamp(UtilLibrary.getDateTimestampF1(filter.getDate()), pageable);
+		
+		Page<Post> pagePost = null;
+		Long dateTimestamp;
+		try {
+			dateTimestamp = UtilLibrary.getDateTimestampF1(filter.getDate());
+			pagePost = postRepositoryData.findByDateTimestamp(dateTimestamp, pageable);
+		}
+		catch (DateTimeParseException e) {
+			dateTimestamp = UtilLibrary.getDateTimestampF2(filter.getDate());
+			pagePost =  postRepositoryData.findInterval(dateTimestamp, dateTimestamp + 86400, pageable);
+		}
+		
+		return pagePost;
 	}
 	
 	@Override
 	public Page<Post> listPostsByDateAndUser(Filter filter) {
 		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
-		return postRepositoryData.findByDateTimestampAndUser(UtilLibrary.getDateTimestampF1(filter.getDate()), filter.getUserId(), pageable);
+		
+		Page<Post> pagePost = null;
+		Long dateTimestamp;
+		try {
+			dateTimestamp = UtilLibrary.getDateTimestampF1(filter.getDate());
+			pagePost = postRepositoryData.findByDateTimestampAndUser(dateTimestamp, new User(filter.getUserId()), pageable);
+		}
+		catch (DateTimeParseException e) {
+			dateTimestamp = UtilLibrary.getDateTimestampF2(filter.getDate());
+			pagePost =  postRepositoryData.findIntervalAndUser(dateTimestamp, dateTimestamp + 86400, filter.getUserId(), pageable);
+		}
+		
+		return pagePost;
 	}
 
 
 	@Override
 	public Page<Post> listPostsByUser(Filter filter) {
 		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
-		return postRepositoryData.findByUser(filter.getUserId(), pageable);
+		return postRepositoryData.findByUser(new User(filter.getUserId()), pageable);
 
 	}
 

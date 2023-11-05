@@ -92,7 +92,7 @@ public class PictureControllerImpl implements PictureController {
 	        @ApiResponse(responseCode = "404", description = "Não Encontrado - Não foram encontrados fotos com os parâmetros de entrada fornecidos.", content = @Content),
 	        @ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content)
 	})
-	@GetMapping("/pictures/{pictureId}/")
+	@GetMapping("/pictures/{pictureId}")
 	@ResponseBody
 	@Override
 	public ResponseEntity<PictureDTO> getPicture(
@@ -114,7 +114,7 @@ public class PictureControllerImpl implements PictureController {
 			@ApiResponse(responseCode = "200", description = "Foto atualizada com sucesso.", content = {
 					@Content(mediaType = "application/json", schema = @Schema(implementation = PictureDTO.class)) }),
 			@ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content) })
-	@PutMapping("/pictures/{pictureId}/")
+	@PutMapping("/pictures/{pictureId}")
 	@ResponseBody
 	@Override
 	public ResponseEntity<PictureDTO> updatePicture(
@@ -132,7 +132,7 @@ public class PictureControllerImpl implements PictureController {
 			@ApiResponse(responseCode = "204", description = "Foto removida com sucesso.", content = {
 					@Content(mediaType = "application/json", schema = @Schema(implementation = PictureDTO.class)) }),
 			@ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content) })
-	@DeleteMapping("/pictures/{pictureId}/")
+	@DeleteMapping("/pictures/{pictureId}")
 	@ResponseBody
 	@Override
 	public ResponseEntity<PictureDTO> deletePicture(

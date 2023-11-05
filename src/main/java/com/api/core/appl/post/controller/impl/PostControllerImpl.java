@@ -109,7 +109,7 @@ public class PostControllerImpl implements PostController {
 		        @ApiResponse(responseCode = "404", description = "Não Encontrado - Não foram encontrados posts com os parâmetros de entrada fornecidos.", content = @Content),
 		        @ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content)
 		})
-		@GetMapping("/posts/{postId}/")
+		@GetMapping("/posts/{postId}")
 		@ResponseBody
 		@Override
 		public ResponseEntity<PostDTO> getPost(
@@ -129,7 +129,7 @@ public class PostControllerImpl implements PostController {
 				@ApiResponse(responseCode = "200", description = "Post atualizado com sucesso.", content = {
 						@Content(mediaType = "application/json", schema = @Schema(implementation = PostDTO.class)) }),
 				@ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content) })
-		@PutMapping("/posts/{postId}/")
+		@PutMapping("/posts/{postId}")
 		@ResponseBody
 		@Override
 		public ResponseEntity<PostDTO> updatePost(
@@ -147,7 +147,7 @@ public class PostControllerImpl implements PostController {
 				@ApiResponse(responseCode = "204", description = "Post removido com sucesso.", content = {
 						@Content(mediaType = "application/json", schema = @Schema(implementation = PostDTO.class)) }),
 				@ApiResponse(responseCode = "500", description = "Erro Interno do Servidor", content = @Content) })
-		@DeleteMapping("/posts/{postId}/")
+		@DeleteMapping("/posts/{postId}")
 		@ResponseBody
 		@Override
 		public ResponseEntity<PostDTO> deletePost(

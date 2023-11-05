@@ -49,7 +49,12 @@ public class UserRepositoryImpl implements UserRepository{
 	@Override
 	public Page<User> listUsersByBirthDateAndFirstName(Filter filter) {
 		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
-		return userRepositoryData.findByBirthDateTimestampAndFirstName(UtilLibrary.getDateTimestampF1(filter.getBirthDate()), filter.getFirstName(), pageable);
+		Page<User> userPage = userRepositoryData.findByBirthDateTimestampAndFirstName(UtilLibrary.getDateTimestampF1(filter.getBirthDate()), filter.getFirstName(), pageable);
+		if(userPage.getContent().size() == 0) {
+			userPage = userRepositoryData.findBirthDateTimestampAndFirstNameLike(UtilLibrary.getDateTimestampF1(filter.getBirthDate()), filter.getFirstName(), pageable);
+		}
+		
+		return userPage;
 	}
 	
 	@Override
@@ -62,7 +67,12 @@ public class UserRepositoryImpl implements UserRepository{
 	@Override
 	public Page<User> listUsersByFirstName(Filter filter) {
 		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
-		return userRepositoryData.findByFirstName(filter.getFirstName(), pageable);
+		Page<User> userPage =  userRepositoryData.findByFirstName(filter.getFirstName(), pageable);
+		if(userPage.getContent().size() == 0) {
+			userPage = userRepositoryData.findFirstNameLike(filter.getFirstName(), pageable);
+		}
+		
+		return userPage;
 	}
 
 

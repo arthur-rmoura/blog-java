@@ -3,6 +3,7 @@ package com.api.core.appl.util;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -80,6 +81,18 @@ public class UtilLibrary {
 		LocalDateTime localDateTime = LocalDateTime.parse(date, formatter);
 		Instant instant = Instant.now();
 		long dateTimestamp = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
+		return dateTimestamp;
+	}
+	
+	public static long getDateTimestampF2(String date) {
+		DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+			    .parseCaseInsensitive()
+			    .appendPattern("uuuu-MM-dd")
+			    .toFormatter(Locale.ENGLISH);
+		
+		LocalDate localDate = LocalDate.parse(date, formatter);
+		Instant instant = Instant.now();
+		long dateTimestamp = localDate.atStartOfDay(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant)).toEpochSecond(); 
 		return dateTimestamp;
 	}
 

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -12,6 +13,9 @@ import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.api.core.appl.comment.Comment;
 import com.api.core.appl.comment.service.spec.CommentService;
@@ -20,7 +24,9 @@ import com.api.core.appl.post.PostDTO;
 import com.api.core.appl.post.repository.spec.PostRepository;
 import com.api.core.appl.post.service.spec.PostService;
 import com.api.core.appl.user.User;
+import com.api.core.appl.user.service.spec.UserService;
 import com.api.core.appl.util.Filter;
+import com.api.core.appl.util.UtilLibrary;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -30,6 +36,9 @@ public class PostServiceImpl implements PostService {
 	
 	@Autowired
 	CommentService commentService;
+	
+	@Autowired
+	UserService userService;
 	
 	@Override
 	public ArrayList<PostDTO> listPost(Filter filter) {
@@ -70,22 +79,22 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
+	@Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRES_NEW)
 	public PostDTO createPost(PostDTO postDTO) {
-		
-		DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-			    .parseCaseInsensitive()
-			    .appendPattern("uuuu-MM-dd HH:mm:ss")
-			    .toFormatter(Locale.ENGLISH);
-		
 		
 		long timestampDate = Instant.now().toEpochMilli() / 1000;
 		if (postDTO.getDate() != null) {
-			LocalDateTime localDateTime = LocalDateTime.parse(postDTO.getDate(), formatter);
-			Instant instant = Instant.now();
-			timestampDate = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
+			try {
+				timestampDate = UtilLibrary.getDateTimestampF1(postDTO.getDate());
+			}
+			catch (DateTimeParseException e) {
+				timestampDate = UtilLibrary.getDateTimestampF2(postDTO.getDate());
+			}
 		}
 		
-		User user = new User(1L); //TODO pegar o id da sessão do usuário
+		Filter filter = new Filter();
+		filter.setUserId(1L); //TODO pegar o id da sessão do usuário
+		User user = userService.getUserEntity(filter);
 		Post post = new Post(timestampDate, postDTO.getTextContent(), new ArrayList<Comment>(), user);
 
 		post = postRepository.createPost(post);
@@ -118,21 +127,22 @@ public class PostServiceImpl implements PostService {
 
 	
 	@Override
+	@Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRES_NEW)
 	public PostDTO updatePost(PostDTO postDTO) {
-		DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-			    .parseCaseInsensitive()
-			    .appendPattern("uuuu-MM-dd HH:mm:ss")
-			    .toFormatter(Locale.ENGLISH);
-		
 		
 		long timestampDate = Instant.now().toEpochMilli() / 1000;
 		if (postDTO.getDate() != null) {
-			LocalDateTime localDateTime = LocalDateTime.parse(postDTO.getDate(), formatter);
-			Instant instant = Instant.now();
-			timestampDate = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
+			try {
+				timestampDate = UtilLibrary.getDateTimestampF1(postDTO.getDate());
+			}
+			catch (DateTimeParseException e) {
+				timestampDate = UtilLibrary.getDateTimestampF2(postDTO.getDate());
+			}
 		}
 		
-		User user = new User(postDTO.getUserId());
+		Filter filter = new Filter();
+		filter.setUserId(1L); //TODO pegar o id da sessão do usuário
+		User user = userService.getUserEntity(filter);
 		Post post = new Post(timestampDate, postDTO.getTextContent(), new ArrayList<Comment>(), user);
 
 		post.setId(postDTO.getId());
@@ -144,6 +154,11 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public void deletePost(Long postId) {
 		postRepository.deletePost(postId);
+	}
+
+	@Override
+	public Post getPostEntity(Filter filter) {
+		return postRepository.findPostById(filter);
 	}
 
 }

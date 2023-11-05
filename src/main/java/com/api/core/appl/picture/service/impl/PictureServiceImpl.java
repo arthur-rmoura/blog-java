@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -24,6 +25,7 @@ import com.api.core.appl.picture.PictureDTO;
 import com.api.core.appl.picture.repository.spec.PictureRepository;
 import com.api.core.appl.picture.service.spec.PictureService;
 import com.api.core.appl.user.User;
+import com.api.core.appl.user.service.spec.UserService;
 import com.api.core.appl.util.Filter;
 import com.api.core.appl.util.UtilLibrary;
 import com.api.core.appl.util.UtilVariables;
@@ -43,6 +45,9 @@ public class PictureServiceImpl implements PictureService {
 	
 	@Autowired
 	AlbumService albumService;
+	
+	@Autowired
+	UserService userService;
 	
 
 	@Override
@@ -94,33 +99,31 @@ public class PictureServiceImpl implements PictureService {
 	@Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRES_NEW)
 	public PictureDTO createPicture(PictureDTO pictureDTO) {
 		
-		DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-			    .parseCaseInsensitive()
-			    .appendPattern("uuuu-MM-dd HH:mm:ss")
-			    .toFormatter(Locale.ENGLISH);
-		
-		
 		long timestampDate = Instant.now().toEpochMilli() / 1000;
 		if (pictureDTO.getDate() != null) {
-			LocalDateTime localDateTime = LocalDateTime.parse(pictureDTO.getDate(), formatter);
-			Instant instant = Instant.now();
-			timestampDate = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
+			try {
+				timestampDate = UtilLibrary.getDateTimestampF1(pictureDTO.getDate());
+			}
+			catch (DateTimeParseException e) {
+				timestampDate = UtilLibrary.getDateTimestampF2(pictureDTO.getDate());
+			}
 		}
 		
 
 		UUID uuid = UUID.randomUUID();
-		Picture picture = new Picture(pictureDTO.getName(), timestampDate, uuid);
+		Picture picture = new Picture(pictureDTO.getName(), timestampDate, uuid.toString());
 		
 		Filter filter = new Filter();
 		filter.setAlbumId(pictureDTO.getAlbumId());
 		Album album = albumService.getAlbumEntity(filter);
 		
 		if(album.getId() == null) {
-			album.setId(pictureDTO.getAlbumId());
-			User user = new User(1L); //TODO pegar o id da sessão do usuário
+			filter.setUserId(1L); //TODO pegar o id da sessão do usuário
+			User user = userService.getUserEntity(filter);
 			album.setUser(user);
+			album = albumService.createAlbumEntity(album);
 		}
-		album = albumService.createAlbumEntity(album);
+		
 		picture.setAlbum(album);
 		
 		StaticCredentialsProvider staticCredentialsProvider = utilVariables.getStaticCredentialsProvider();
@@ -174,25 +177,34 @@ public class PictureServiceImpl implements PictureService {
 
 
 	@Override
+	@Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRES_NEW)
 	public PictureDTO updatePicture(PictureDTO pictureDTO) {
-		DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-			    .parseCaseInsensitive()
-			    .appendPattern("uuuu-MM-dd HH:mm:ss")
-			    .toFormatter(Locale.ENGLISH);
-		
 		
 		long timestampDate = Instant.now().toEpochMilli() / 1000;
 		if (pictureDTO.getDate() != null) {
-			LocalDateTime localDateTime = LocalDateTime.parse(pictureDTO.getDate(), formatter);
-			Instant instant = Instant.now();
-			timestampDate = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
+			try {
+				timestampDate = UtilLibrary.getDateTimestampF1(pictureDTO.getDate());
+			}
+			catch (DateTimeParseException e) {
+				timestampDate = UtilLibrary.getDateTimestampF2(pictureDTO.getDate());
+			}
 		}
 		
 
 		UUID uuid = UUID.randomUUID();
-		Picture picture = new Picture(pictureDTO.getName(), timestampDate, uuid);
+		Picture picture = new Picture(pictureDTO.getName(), timestampDate, uuid.toString());
 		
-		Album album = new Album(pictureDTO.getAlbumId());
+		Filter filter = new Filter();
+		filter.setAlbumId(pictureDTO.getAlbumId());
+		Album album = albumService.getAlbumEntity(filter);
+		
+		if(album.getId() == null) {
+			filter.setUserId(1L); //TODO pegar o id da sessão do usuário
+			User user = userService.getUserEntity(filter);
+			album.setUser(user);
+			album = albumService.createAlbumEntity(album);
+		}
+		
 		picture.setAlbum(album);
 		
 		StaticCredentialsProvider staticCredentialsProvider = utilVariables.getStaticCredentialsProvider();

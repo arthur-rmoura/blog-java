@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.api.core.appl.comment.Comment;
 import com.api.core.appl.comment.repository.spec.CommentRepository;
 import com.api.core.appl.comment.repository.spec.CommentRepositoryData;
+import com.api.core.appl.user.User;
 import com.api.core.appl.util.Filter;
 import com.api.core.appl.util.UtilLibrary;
 
@@ -46,14 +47,14 @@ public class CommentRepositoryImpl implements CommentRepository{
 	@Override
 	public Page<Comment> listCommentsByDateAndUser(Filter filter) {
 		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
-		return commentRepositoryData.findByDateTimestampAndUser(UtilLibrary.getDateTimestampF1(filter.getDate()), filter.getUserId(), pageable);
+		return commentRepositoryData.findByDateTimestampAndUser(UtilLibrary.getDateTimestampF1(filter.getDate()), new User(filter.getUserId()), pageable);
 	}
 
 
 	@Override
 	public Page<Comment> listCommentsByUser(Filter filter) {
 		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
-		return commentRepositoryData.findByUser(filter.getUserId(), pageable);
+		return commentRepositoryData.findByUser(new User (filter.getUserId()), pageable);
 
 	}
 

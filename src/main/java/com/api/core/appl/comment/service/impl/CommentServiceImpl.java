@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -18,9 +19,11 @@ import com.api.core.appl.comment.CommentDTO;
 import com.api.core.appl.comment.repository.spec.CommentRepository;
 import com.api.core.appl.comment.service.spec.CommentService;
 import com.api.core.appl.post.Post;
-import com.api.core.appl.post.service.spec.PostService;
+import com.api.core.appl.post.repository.spec.PostRepository;
 import com.api.core.appl.user.User;
+import com.api.core.appl.user.service.spec.UserService;
 import com.api.core.appl.util.Filter;
+import com.api.core.appl.util.UtilLibrary;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -29,7 +32,11 @@ public class CommentServiceImpl implements CommentService {
 	CommentRepository commentRepository;
 	
 	@Autowired
-	PostService postService;
+	PostRepository postRepository;
+	
+	@Autowired
+	UserService userService;
+	
 	
 	@Override
 	public ArrayList<CommentDTO> listComment(Filter filter) {
@@ -72,34 +79,32 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public CommentDTO createComment(CommentDTO commentDTO) {
 		
-		DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-			    .parseCaseInsensitive()
-			    .appendPattern("uuuu-MM-dd HH:mm:ss")
-			    .toFormatter(Locale.ENGLISH);
-		
-		
-		long timestampDate = Instant.now().toEpochMilli() / 1000;
-		if (commentDTO.getDate() != null) {
-			LocalDateTime localDateTime = LocalDateTime.parse(commentDTO.getDate(), formatter);
-			Instant instant = Instant.now();
-			timestampDate = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
-		}
-		
-		User user = new User(1L); //TODO pegar o id da sessão do usuário
-		Comment comment = new Comment(timestampDate, commentDTO.getTextContent(), user);
-		
 		Filter filter = new Filter();
 		filter.setPostId(commentDTO.getPostId());
-		Post post = postService.getPostEntity(filter);
+		Post post = postRepository.findPostById(filter);
 		
 		if(post.getId() == null) {
 			throw new RuntimeException("The post doesn't exist");
 		}
-
-		comment.setPost(post);
-		comment = commentRepository.createComment(comment);
-		commentDTO.setId(comment.getId());
 		
+		long timestampDate = Instant.now().toEpochMilli() / 1000;
+		if (commentDTO.getDate() != null) {
+			try {
+				timestampDate = UtilLibrary.getDateTimestampF1(commentDTO.getDate());
+			}
+			catch (DateTimeParseException e) {
+				timestampDate = UtilLibrary.getDateTimestampF2(commentDTO.getDate());
+			}
+		}
+		
+		filter.setUserId(1L); //TODO pegar o id da sessão do usuário
+		User user = userService.getUserEntity(filter);
+		
+		Comment comment = new Comment(timestampDate, commentDTO.getTextContent(), user);
+		comment.setPost(post);
+		
+		comment = commentRepository.updateComment(comment);
+		commentDTO.setId(comment.getId());
 
 		return commentDTO;
 	}
@@ -128,24 +133,31 @@ public class CommentServiceImpl implements CommentService {
 	
 	@Override
 	public CommentDTO updateComment(CommentDTO commentDTO) {
-		DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-			    .parseCaseInsensitive()
-			    .appendPattern("uuuu-MM-dd HH:mm:ss")
-			    .toFormatter(Locale.ENGLISH);
 		
+		Filter filter = new Filter();
+		filter.setPostId(commentDTO.getPostId());
+		Post post = postRepository.findPostById(filter);
+		
+		if(post.getId() == null) {
+			throw new RuntimeException("The post doesn't exist");
+		}
 		
 		long timestampDate = Instant.now().toEpochMilli() / 1000;
 		if (commentDTO.getDate() != null) {
-			LocalDateTime localDateTime = LocalDateTime.parse(commentDTO.getDate(), formatter);
-			Instant instant = Instant.now();
-			timestampDate = localDateTime.toEpochSecond(ZoneId.of("America/Sao_Paulo").getRules().getOffset(instant));
+			try {
+				timestampDate = UtilLibrary.getDateTimestampF1(commentDTO.getDate());
+			}
+			catch (DateTimeParseException e) {
+				timestampDate = UtilLibrary.getDateTimestampF2(commentDTO.getDate());
+			}
 		}
 		
-		User user = new User(1L); //TODO pegar o id da sessão do usuário
-		Post post = new Post(commentDTO.getPostId());
-		//TODO -> verificar também os updates
+		filter.setUserId(1L); //TODO pegar o id da sessão do usuário
+		User user = userService.getUserEntity(filter);
+		
 		Comment comment = new Comment(timestampDate, commentDTO.getTextContent(), user);
-
+		comment.setPost(post);
+		
 		comment.setId(commentDTO.getId());
 		comment = commentRepository.updateComment(comment);
 

@@ -1,5 +1,6 @@
 package com.api.core.appl.album.repository.impl;
 
+import java.time.format.DateTimeParseException;
 import java.util.NoSuchElementException;
 
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.api.core.appl.album.Album;
 import com.api.core.appl.album.repository.spec.AlbumRepository;
 import com.api.core.appl.album.repository.spec.AlbumRepositoryData;
+import com.api.core.appl.user.User;
 import com.api.core.appl.util.Filter;
 import com.api.core.appl.util.UtilLibrary;
 
@@ -49,20 +51,43 @@ public class AlbumRepositoryImpl implements AlbumRepository{
 	@Override
 	public Page<Album> listAlbumsByDate(Filter filter) {
 		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
-		return albumRepositoryData.findByDateTimestamp(UtilLibrary.getDateTimestampF1(filter.getDate()), pageable);
+		Long dateTimestamp;
+		Page<Album> pageAlbum = null;
+		try {
+			dateTimestamp = UtilLibrary.getDateTimestampF1(filter.getDate());
+			pageAlbum = albumRepositoryData.findByDateTimestamp(dateTimestamp, pageable);
+		}
+		catch (DateTimeParseException e) {
+			dateTimestamp = UtilLibrary.getDateTimestampF2(filter.getDate());
+			pageAlbum =  albumRepositoryData.findInterval(dateTimestamp, dateTimestamp + 86400, pageable);
+		}
+		
+		return pageAlbum;
 	}
 	
 	@Override
 	public Page<Album> listAlbumsByDateAndUser(Filter filter) {
 		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
-		return albumRepositoryData.findByDateTimestampAndUser(UtilLibrary.getDateTimestampF1(filter.getDate()), filter.getUserId(), pageable);
+		Long dateTimestamp;
+		Page<Album> pageAlbum = null;
+		try {
+			dateTimestamp = UtilLibrary.getDateTimestampF1(filter.getDate());
+			pageAlbum = albumRepositoryData.findByDateTimestampAndUser(dateTimestamp, new User(filter.getUserId()), pageable);
+		}
+		catch (DateTimeParseException e) {
+			dateTimestamp = UtilLibrary.getDateTimestampF2(filter.getDate());
+			pageAlbum =  albumRepositoryData.findIntervalAndUser(dateTimestamp, dateTimestamp + 86400, filter.getUserId(), pageable);
+		}
+		
+		return pageAlbum;
+		
 	}
 
 
 	@Override
 	public Page<Album> listAlbumsByUser(Filter filter) {
 		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
-		return albumRepositoryData.findByUser(filter.getUserId(), pageable);
+		return albumRepositoryData.findByUser(new User(filter.getUserId()), pageable);
 
 	}
 
