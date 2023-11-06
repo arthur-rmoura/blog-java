@@ -1,5 +1,6 @@
 package com.api.core.appl.comment.repository.impl;
 
+import java.time.format.DateTimeParseException;
 import java.util.NoSuchElementException;
 
 import org.springframework.data.domain.Page;
@@ -41,13 +42,36 @@ public class CommentRepositoryImpl implements CommentRepository{
 	@Override
 	public Page<Comment> listCommentsByDate(Filter filter) {
 		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
-		return commentRepositoryData.findByDateTimestamp(UtilLibrary.getDateTimestampF1(filter.getDate()), pageable);
+		
+		Long dateTimestamp;
+		Page<Comment> pageComment = null;
+		try {
+			dateTimestamp = UtilLibrary.getDateTimestampF1(filter.getDate());
+			pageComment = commentRepositoryData.findByDateTimestamp(dateTimestamp, pageable);
+		}
+		catch (DateTimeParseException e) {
+			dateTimestamp = UtilLibrary.getDateTimestampF2(filter.getDate());
+			pageComment =  commentRepositoryData.findInterval(dateTimestamp, dateTimestamp + 86400, pageable);
+		}
+		
+		return pageComment;
 	}
 	
 	@Override
 	public Page<Comment> listCommentsByDateAndUser(Filter filter) {
 		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
-		return commentRepositoryData.findByDateTimestampAndUser(UtilLibrary.getDateTimestampF1(filter.getDate()), new User(filter.getUserId()), pageable);
+		Page<Comment> pageComment = null;
+		Long dateTimestamp;
+		try {
+			dateTimestamp = UtilLibrary.getDateTimestampF1(filter.getDate());
+			pageComment = commentRepositoryData.findByDateTimestampAndUser(dateTimestamp, new User(filter.getUserId()), pageable);
+		}
+		catch (DateTimeParseException e) {
+			dateTimestamp = UtilLibrary.getDateTimestampF2(filter.getDate());
+			pageComment =  commentRepositoryData.findIntervalAndUser(dateTimestamp, dateTimestamp + 86400, filter.getUserId(), pageable);
+		}
+		
+		return pageComment;
 	}
 
 

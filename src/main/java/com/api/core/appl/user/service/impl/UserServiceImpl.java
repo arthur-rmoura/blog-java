@@ -13,6 +13,9 @@ import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.api.core.appl.user.User;
 import com.api.core.appl.user.UserDTO;
@@ -66,6 +69,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRES_NEW)
 	public UserDTO createUser(UserDTO userDTO) {
 		
 		long timestampDate = Instant.now().toEpochMilli() / 1000;
@@ -114,6 +118,7 @@ public class UserServiceImpl implements UserService {
 
 	
 	@Override
+	@Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRES_NEW)
 	public UserDTO updateUser(UserDTO userDTO) {
 		
 		long timestampDate = Instant.now().toEpochMilli() / 1000;

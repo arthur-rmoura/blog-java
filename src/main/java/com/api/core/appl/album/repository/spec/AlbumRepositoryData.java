@@ -20,11 +20,11 @@ public interface AlbumRepositoryData extends PagingAndSortingRepository<Album, L
 
 	Page<Album> findByUser(User user, Pageable pageable);
 
-	@Query("SELECT alb FROM Album alb WHERE alb.dateTimestamp between :dateTimestampInicio and :dateTimestampFim and alb.user.id = :userId")
-	Page<Album> findIntervalAndUser(Long dateTimestampInicio, Long dateTimestampFim, Long userId, Pageable pageable);
+	@Query("SELECT alb FROM Album alb WHERE alb.dateTimestamp between :dateTimestampStart and :dateTimestampEnd and alb.user.id = :userId")
+	Page<Album> findIntervalAndUser(Long dateTimestampStart, Long dateTimestampEnd, Long userId, Pageable pageable);
 
-	@Query("SELECT alb FROM Album alb WHERE alb.dateTimestamp between :dateTimestampInicio and :dateTimestampFim")
-	Page<Album> findInterval(Long dateTimestamp, Long dateTimestampFim, Pageable pageable);
+	@Query("SELECT alb FROM Album alb WHERE alb.dateTimestamp between :dateTimestampStart and :dateTimestampEnd")
+	Page<Album> findInterval(Long dateTimestampStart, Long dateTimestampEnd, Pageable pageable);
 
 	
 }

@@ -1,5 +1,6 @@
 package com.api.core.appl.user.repository.impl;
 
+import java.time.format.DateTimeParseException;
 import java.util.NoSuchElementException;
 
 import org.springframework.data.domain.Page;
@@ -49,18 +50,55 @@ public class UserRepositoryImpl implements UserRepository{
 	@Override
 	public Page<User> listUsersByBirthDateAndFirstName(Filter filter) {
 		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
-		Page<User> userPage = userRepositoryData.findByBirthDateTimestampAndFirstName(UtilLibrary.getDateTimestampF1(filter.getBirthDate()), filter.getFirstName(), pageable);
-		if(userPage.getContent().size() == 0) {
-			userPage = userRepositoryData.findBirthDateTimestampAndFirstNameLike(UtilLibrary.getDateTimestampF1(filter.getBirthDate()), filter.getFirstName(), pageable);
+		Long dateTimestamp = 0L;
+		Boolean interval = false;
+		
+		try {
+			dateTimestamp = UtilLibrary.getDateTimestampF1(filter.getBirthDate());
+		}
+		catch (DateTimeParseException e) {
+			dateTimestamp = UtilLibrary.getDateTimestampF2(filter.getBirthDate());
+			interval = true;
 		}
 		
-		return userPage;
+		if(interval == true) {
+			Page<User> userPage = userRepositoryData.findIntervalBirthDateTimestampAndFirstName(dateTimestamp, dateTimestamp + 86400, filter.getFirstName(), pageable);
+			if(userPage.getContent().size() == 0) {
+				userPage = userRepositoryData.findIntervalBirthDateTimestampAndFirstNameLike(dateTimestamp, dateTimestamp + 86400, filter.getFirstName(), pageable);
+			}
+			
+			return userPage;
+		}
+		else {
+			Page<User> userPage = userRepositoryData.findByBirthDateTimestampAndFirstName(dateTimestamp, filter.getFirstName(), pageable);
+			if(userPage.getContent().size() == 0) {
+				userPage = userRepositoryData.findBirthDateTimestampAndFirstNameLike(dateTimestamp, filter.getFirstName(), pageable);
+			}
+			
+			return userPage;
+		}
 	}
 	
 	@Override
 	public Page<User> listUsersByBirthDate(Filter filter) {
-		Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
-		return userRepositoryData.findByBirthDateTimestamp(UtilLibrary.getDateTimestampF1(filter.getBirthDate()), pageable);
+		Long dateTimestamp = 0L;
+		Boolean interval = false;
+		try {
+			dateTimestamp = UtilLibrary.getDateTimestampF1(filter.getBirthDate());
+		}
+		catch (DateTimeParseException e) {
+			dateTimestamp = UtilLibrary.getDateTimestampF2(filter.getBirthDate());
+			interval = true;
+		}
+		
+		if(interval == true) {
+			Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
+			return userRepositoryData.findIntervalBirthDateTimestamp(dateTimestamp, dateTimestamp + 86400, pageable);
+		}
+		else {
+			Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize());
+			return userRepositoryData.findByBirthDateTimestamp(dateTimestamp, pageable);
+		}
 	}
 
 

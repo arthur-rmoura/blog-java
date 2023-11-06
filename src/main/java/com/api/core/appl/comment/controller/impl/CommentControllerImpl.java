@@ -2,6 +2,8 @@ package com.api.core.appl.comment.controller.impl;
 
 import java.util.ArrayList;
 
+import javax.ws.rs.NotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -92,8 +94,12 @@ public class CommentControllerImpl implements CommentController {
 	    		)  
 	    		@RequestBody CommentDTO commentDTO) {
 			
-			commentDTO = commentService.createComment(commentDTO);
-			return new ResponseEntity<CommentDTO>(commentDTO, HttpStatus.CREATED);
+			try {
+				commentDTO = commentService.createComment(commentDTO);
+				return new ResponseEntity<CommentDTO>(commentDTO, HttpStatus.CREATED);
+			} catch (NotFoundException e) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
 			
 	    }
 	
@@ -137,9 +143,14 @@ public class CommentControllerImpl implements CommentController {
 				@io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, description = "Payload da requisição contendo o conteúdo json do comentário a ser atualizado", content = {
 				@Content(mediaType = "application/json", schema = @Schema(implementation = CommentDTO.class)) }) @RequestBody CommentDTO commentDTO
 		) {
-			commentDTO.setId(commentId);
-			commentDTO = commentService.updateComment(commentDTO);
-			return new ResponseEntity<CommentDTO>(commentDTO, HttpStatus.OK);
+			try {
+				commentDTO.setId(commentId);
+				commentDTO = commentService.updateComment(commentDTO);
+				return new ResponseEntity<CommentDTO>(commentDTO, HttpStatus.OK);
+			} catch (NotFoundException e) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+			
 		}
 
 		@Operation(summary = "Remove comentário", description = "Remove comentário de id passado como parâmetro")

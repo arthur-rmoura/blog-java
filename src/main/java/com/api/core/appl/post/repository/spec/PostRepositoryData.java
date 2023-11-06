@@ -19,10 +19,10 @@ public interface PostRepositoryData extends PagingAndSortingRepository<Post, Lon
 
 	Page<Post> findByUser(User user, Pageable pageable);
 
-	@Query("SELECT post FROM Post post WHERE post.dateTimestamp between :dateTimestampInicio and :dateTimestampFim and post.user.id = :userId")
-	Page<Post> findIntervalAndUser(Long dateTimestampInicio, Long dateTimestampFim, Long userId, Pageable pageable);
+	@Query("SELECT post FROM Post post WHERE post.dateTimestamp between :dateTimestampStart and :dateTimestampEnd and post.user.id = :userId")
+	Page<Post> findIntervalAndUser(Long dateTimestampStart, Long dateTimestampEnd, Long userId, Pageable pageable);
 
-	@Query("SELECT post FROM Post post WHERE post.dateTimestamp between :dateTimestampInicio and :dateTimestampFim")
-	Page<Post> findInterval(Long dateTimestamp, Long dateTimestampFim, Pageable pageable);
+	@Query("SELECT post FROM Post post WHERE post.dateTimestamp between :dateTimestampStart and :dateTimestampEnd")
+	Page<Post> findInterval(Long dateTimestampStart, Long dateTimestampEnd, Pageable pageable);
 	
 }

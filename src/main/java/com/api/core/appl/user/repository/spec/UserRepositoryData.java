@@ -25,5 +25,15 @@ public interface UserRepositoryData extends PagingAndSortingRepository<User, Lon
 	@Query("SELECT u FROM User u WHERE u.firstName like CONCAT('%',:firstName,'%') and u.birthDateTimestamp = :dateTimestamp")
 	Page<User> findBirthDateTimestampAndFirstNameLike(long dateTimestamp, String firstName, Pageable pageable);
 
+	@Query("SELECT u FROM User u WHERE u.birthDateTimestamp between :dateTimestampStart and :dateTimestampEnd")
+	Page<User> findIntervalBirthDateTimestamp(Long dateTimestampStart, Long dateTimestampEnd, Pageable pageable);
+
+	@Query("SELECT u FROM User u WHERE u.firstName = :firstName and u.birthDateTimestamp between :dateTimestampStart and :dateTimestampEnd")
+	Page<User> findIntervalBirthDateTimestampAndFirstName(Long dateTimestampStart, Long dateTimestampEnd, String firstName, Pageable pageable);
+
+	@Query("SELECT u FROM User u WHERE u.firstName like CONCAT('%',:firstName,'%') and u.birthDateTimestamp between :dateTimestampStart and :dateTimestampEnd")
+	Page<User> findIntervalBirthDateTimestampAndFirstNameLike(Long dateTimestampStart, Long dateTimestampEnd, String firstName,
+			Pageable pageable);
+
 	
 }

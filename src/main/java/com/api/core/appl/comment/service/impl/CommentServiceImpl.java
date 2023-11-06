@@ -10,9 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.ws.rs.NotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.api.core.appl.comment.Comment;
 import com.api.core.appl.comment.CommentDTO;
@@ -77,6 +82,7 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	@Override
+	@Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRES_NEW)
 	public CommentDTO createComment(CommentDTO commentDTO) {
 		
 		Filter filter = new Filter();
@@ -84,7 +90,7 @@ public class CommentServiceImpl implements CommentService {
 		Post post = postRepository.findPostById(filter);
 		
 		if(post.getId() == null) {
-			throw new RuntimeException("The post doesn't exist");
+			throw new NotFoundException("The post doesn't exist");
 		}
 		
 		long timestampDate = Instant.now().toEpochMilli() / 1000;
@@ -103,7 +109,7 @@ public class CommentServiceImpl implements CommentService {
 		Comment comment = new Comment(timestampDate, commentDTO.getTextContent(), user);
 		comment.setPost(post);
 		
-		comment = commentRepository.updateComment(comment);
+		comment = commentRepository.createComment(comment);
 		commentDTO.setId(comment.getId());
 
 		return commentDTO;
@@ -132,6 +138,7 @@ public class CommentServiceImpl implements CommentService {
 
 	
 	@Override
+	@Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRES_NEW)
 	public CommentDTO updateComment(CommentDTO commentDTO) {
 		
 		Filter filter = new Filter();
@@ -139,7 +146,7 @@ public class CommentServiceImpl implements CommentService {
 		Post post = postRepository.findPostById(filter);
 		
 		if(post.getId() == null) {
-			throw new RuntimeException("The post doesn't exist");
+			throw new NotFoundException("The post doesn't exist");
 		}
 		
 		long timestampDate = Instant.now().toEpochMilli() / 1000;
