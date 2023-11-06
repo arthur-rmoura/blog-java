@@ -11,7 +11,7 @@ Tecnologias/Frameworks utilizados:
 - PostgresSQL 11
 
 ## Iniciando a aplicação 
-- Para iniciar a aplicação de forma local é necessário ter uma instância do postgres 11 rodando na máquina e ter um schema já criado de nome "db_appl_blog" para que a aplicação possa se conectar. Toda a estrutura de DDL é criada automaticamente na primeira vez que se iniciar a aplicação.
+- Para iniciar a aplicação de forma local é necessário ter uma instância do postgres 11 rodando na máquina e ter um banco de dados já criado de nome "db_appl_blog" para que a aplicação possa se conectar. Toda a estrutura de DDL é criada automaticamente na primeira vez que se iniciar a aplicação.
 
 - Tendo criado o banco e revisado as credenciais no arquivo "application-dev.properties" colocando-as de acordo com as da
 instância local do postgres, basta digitar o comando abaixo no terminal dentro da pasta "artefatos" do repositório:
