@@ -44,7 +44,7 @@ public class User implements Serializable {
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private List<Comment> commentList;
-	
+
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private List<Album> albumList;
 
@@ -65,6 +65,11 @@ public class User implements Serializable {
 	public User(Long id) {
 		super();
 		this.id = id;
+	}
+
+	public User(String email, String password) {
+		this.email = email;
+		this.password = password;
 	}
 
 	public Long getId() {

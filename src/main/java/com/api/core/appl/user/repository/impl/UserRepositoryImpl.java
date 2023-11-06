@@ -124,4 +124,10 @@ public class UserRepositoryImpl implements UserRepository{
 			return new User("", "", "", "", 0L);
 		}
 	}
+
+
+	@Override
+	public User findUserByEmail(String email) {
+		return userRepositoryData.findByEmail(email);
+	}
 }
