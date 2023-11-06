@@ -88,6 +88,8 @@ public class AlbumServiceImpl implements AlbumService {
 			}
 		}
 		
+		String nameLogged = UtilLibrary.getUserLogged();
+		
 		Filter filter = new Filter();
 		filter.setUserId(1L); //TODO pegar o id da sessão do usuário
 		User user = userService.getUserEntity(filter);

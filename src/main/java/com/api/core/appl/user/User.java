@@ -10,12 +10,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.api.core.appl.album.Album;
 import com.api.core.appl.comment.Comment;
 import com.api.core.appl.post.Post;
 
 @Entity
+@Table(name = "user_app")
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
