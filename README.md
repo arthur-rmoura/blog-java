@@ -22,7 +22,7 @@ java -jar blog-java.jar
 
 ## Funcionamento Básico
 - No repositório existe uma collection do Postman com todos os endpoints apontados e já configurados.
-- Existe o app Swagger da aplicação disponível em localhost:8080/appl/swagger-ui/index.html
+- Existe o app Swagger da aplicação disponível em localhost:8080/swagger-ui/index.html
 - No Swagger é possível ver detalhadamente como cada endpoint está configurado, payloads e respostas.
 - Ao criar uma nova foto o arquivo deve ser convertido para base64 e enviado no json como mostrado no json abaixo:
 
