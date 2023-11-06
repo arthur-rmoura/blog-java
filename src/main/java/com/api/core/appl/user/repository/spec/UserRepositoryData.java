@@ -35,5 +35,7 @@ public interface UserRepositoryData extends PagingAndSortingRepository<User, Lon
 	Page<User> findIntervalBirthDateTimestampAndFirstNameLike(Long dateTimestampStart, Long dateTimestampEnd, String firstName,
 			Pageable pageable);
 
+	User findByEmail(String email);
+
 	
 }
