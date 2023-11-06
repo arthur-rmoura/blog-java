@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import software.amazon.awssdk.core.ResponseBytes;
@@ -127,5 +129,10 @@ public class UtilLibrary {
             e.printStackTrace();
             throw new RuntimeException("Error of password encryption!");
         }  
-	}     
+	}
+	
+	public static String getUserLogged() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return authentication.getName();
+	}
 }

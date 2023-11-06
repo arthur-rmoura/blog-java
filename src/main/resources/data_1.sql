@@ -1,1 +1,1 @@
-SELECT 1
+insert into user_app ( birth_date_timestamp, email, first_name, last_name, password) values (697395600, 'admin@qualquer.com.br', 'Admin', 'Admin', 'aa1bf4646de67fd9086cf6c79007026c')
