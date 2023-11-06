@@ -96,7 +96,7 @@ public class UtilLibrary {
 		return dateTimestamp;
 	}
 
-	public static String encryptMD4(String password) {
+	public static String encryptMD5(String password) {
 		
 		String encryptedPassword = null;  
 		

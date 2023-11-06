@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		
-		User user = new User(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), UtilLibrary.encryptMD4(userDTO.getPassword()), timestampDate);
+		User user = new User(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), UtilLibrary.encryptMD5(userDTO.getPassword()), timestampDate);
 
 		user = userRepository.createUser(user);
 		userDTO.setId(user.getId());
@@ -131,7 +131,7 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		
-		User user = new User(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), UtilLibrary.encryptMD4(userDTO.getPassword()), timestampDate);
+		User user = new User(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), UtilLibrary.encryptMD5(userDTO.getPassword()), timestampDate);
 
 		user.setId(userDTO.getId());
 		user = userRepository.updateUser(user);
